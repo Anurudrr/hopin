@@ -1,19 +1,15 @@
 export type UserRole = "rider" | "driver" | "admin";
-export type DriverStatus = "pending" | "approved" | "rejected";
-export type VehicleType = "sedan" | "suv" | "hatchback" | "luxury";
+export type DriverApplicationStatus = "pending" | "approved" | "rejected";
+export type RideStatus = "scheduled" | "active" | "completed" | "cancelled";
 export type BookingStatus =
   | "searching"
   | "matched"
   | "confirmed"
   | "in_progress"
   | "completed"
-  | "cancelled";
-
-export interface SessionUser {
-  id: string;
-  email: string;
-  role: UserRole;
-}
+  | "cancelled"
+  | "scheduled"
+  | "active";
 
 export interface Profile {
   id: string;
@@ -30,6 +26,7 @@ export interface Profile {
   is_email_verified: boolean;
   onboarding_completed: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Vehicle {
@@ -39,31 +36,49 @@ export interface Vehicle {
   model: string;
   year: number;
   license_plate: string;
-  color: string | null;
-  type: VehicleType;
-  rc_ready: boolean;
-  status: DriverStatus;
+  color: string;
+  capacity: number;
   created_at: string;
-  updated_at: string;
 }
 
-export interface DriverRecord {
+export interface DriverApplication {
   id: string;
   user_id: string;
-  experience: string | null;
-  history: string | null;
-  license_ready: boolean;
-  aadhaar_ready: boolean;
-  pan_ready: boolean;
-  is_online: boolean;
-  is_demo: boolean;
-  status: DriverStatus;
+  status: DriverApplicationStatus;
+  license_number: string;
+  license_expiry: string;
+  document_url: string | null;
+  reviewed_at: string | null;
   created_at: string;
-  updated_at: string;
+}
+
+export interface Ride {
+  id: string;
+  driver_id: string | null;
+  origin_name: string;
+  origin_lat: number;
+  origin_lng: number;
+  destination_name: string;
+  destination_lat: number;
+  destination_lng: number;
+  city: string;
+  departure_time: string;
+  seats_total: number;
+  seats_available: number;
+  fare_per_seat: number;
+  status: RideStatus;
+  created_at: string;
+  driver: {
+    id: string;
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
+  vehicle: Pick<Vehicle, "make" | "model" | "color" | "license_plate"> | null;
 }
 
 export interface Booking {
   id: string;
+  ride_id: string;
   rider_id: string;
   driver_id: string | null;
   city: string;
@@ -78,24 +93,15 @@ export interface Booking {
   seats: number;
   status: BookingStatus;
   created_at: string;
-  updated_at: string;
-}
-
-export interface AuthSession {
-  token: string;
-  user: SessionUser;
-  profile: Profile;
-}
-
-export interface AuthSessionSnapshot {
-  user: SessionUser;
-  profile: Profile;
+  departure_time: string;
+  driver_name: string | null;
+  vehicle_label: string | null;
 }
 
 export interface DriverDashboardData {
-  driverRecord: DriverRecord | null;
-  assignedTrips: Booking[];
-  vehicleCount: number;
+  application: DriverApplication | null;
+  vehicles: Vehicle[];
+  rides: Ride[];
 }
 
 export interface RiderDashboardData {
@@ -103,15 +109,26 @@ export interface RiderDashboardData {
 }
 
 export interface DriverApplicationInput {
-  experience: string;
-  history: string;
-  documents: {
-    license: boolean;
-    aadhaar: boolean;
-    pan: boolean;
-  };
+  licenseNumber: string;
+  licenseExpiry: string;
+  documentUrl: string;
   make: string;
   model: string;
   year: number;
   plate: string;
+  color: string;
+  capacity: number;
+}
+
+export interface RideInput {
+  origin_name: string;
+  origin_lat: number;
+  origin_lng: number;
+  destination_name: string;
+  destination_lat: number;
+  destination_lng: number;
+  city: string;
+  departure_time: string;
+  seats_total: number;
+  fare_per_seat: number;
 }

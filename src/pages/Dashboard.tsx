@@ -10,7 +10,6 @@ import { Avatar } from "../components/ui/Avatar";
 export default function Dashboard() {
   const { profile } = useAuthStore();
   const navigate = useNavigate();
-  const [isOnline, setIsOnline] = React.useState(false);
 
   if (!profile) {
     return (
@@ -62,7 +61,7 @@ export default function Dashboard() {
         </header>
 
         {profile.role === "driver" ? (
-          <DriverDashboard isOnline={isOnline} setIsOnline={setIsOnline} />
+          <DriverDashboard />
         ) : (
           <RiderDashboard profile={profile} />
         )}
