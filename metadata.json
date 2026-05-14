@@ -1,0 +1,6 @@
+{
+  "name": "HopIn",
+  "description": "A premium Indian ride-sharing platform focused on shared commutes, fare splitting, and community-driven mobility.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["Real-time Maps", "Ride Sharing", "Fare Splitting", "Community Matching"]
+}

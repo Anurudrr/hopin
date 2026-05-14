@@ -1,0 +1,16 @@
+{
+  "name": "HopIn",
+  "short_name": "HopIn",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "description": "Shared rides across Indian cities with clearer routes, fairer fares, and calmer trip UX.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

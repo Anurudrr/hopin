@@ -1,0 +1,41 @@
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+
+          if (id.includes('leaflet') || id.includes('react-leaflet')) {
+            return 'maps-vendor';
+          }
+
+          if (id.includes('motion')) {
+            return 'motion-vendor';
+          }
+
+          return 'vendor';
+        },
+      },
+    },
+  },
+  server: {
+    hmr: process.env.DISABLE_HMR !== 'true',
+    proxy: {
+      '/api': {
+        target: `http://localhost:${process.env.API_PORT || '4100'}`,
+        changeOrigin: true,
+      },
+    },
+  },
+});

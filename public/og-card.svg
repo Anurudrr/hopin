@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#050505" />
+      <stop offset="100%" stop-color="#181818" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <g opacity="0.18">
+    <circle cx="196" cy="118" r="164" fill="#ffffff" />
+    <circle cx="1018" cy="96" r="132" fill="#ffffff" />
+    <circle cx="904" cy="522" r="208" fill="#ffffff" />
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.16">
+    <path d="M98 156h1004" />
+    <path d="M98 252h1004" />
+    <path d="M98 348h1004" />
+    <path d="M98 444h1004" />
+    <path d="M98 540h1004" />
+    <path d="M196 84v462" />
+    <path d="M392 84v462" />
+    <path d="M588 84v462" />
+    <path d="M784 84v462" />
+    <path d="M980 84v462" />
+  </g>
+  <text
+    x="102"
+    y="190"
+    fill="#ffffff"
+    font-family="Manrope, Arial, sans-serif"
+    font-size="30"
+    font-weight="700"
+    letter-spacing="10"
+  >
+    HOPIN
+  </text>
+  <text
+    x="102"
+    y="316"
+    fill="#ffffff"
+    font-family="Cormorant Garamond, Georgia, serif"
+    font-size="96"
+    font-style="italic"
+    font-weight="600"
+  >
+    Shared rides
+  </text>
+  <text
+    x="102"
+    y="396"
+    fill="#ffffff"
+    font-family="Manrope, Arial, sans-serif"
+    font-size="84"
+    font-weight="700"
+  >
+    built for dense
+  </text>
+  <text
+    x="102"
+    y="486"
+    fill="#ffffff"
+    font-family="Manrope, Arial, sans-serif"
+    font-size="84"
+    font-weight="700"
+  >
+    Indian corridors
+  </text>
+  <text
+    x="102"
+    y="560"
+    fill="#c8ced8"
+    font-family="Manrope, Arial, sans-serif"
+    font-size="28"
+  >
+    Route clarity. Verified riders. Cleaner fare logic.
+  </text>
+</svg>

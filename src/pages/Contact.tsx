@@ -1,0 +1,297 @@
+import * as React from "react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+
+import { submitContactMessage } from "../lib/api";
+import { Reveal } from "../components/site/Reveal";
+import { SectionHeading } from "../components/site/SectionHeading";
+import { Button } from "../components/ui/Button";
+
+const topicOptions = [
+  "General inquiry",
+  "Safety concern",
+  "Technical issue",
+  "Careers",
+  "Partnership",
+  "Expansion",
+];
+
+function resolveTopicPrefill(requestedTopic: string | null) {
+  if (!requestedTopic) return "General inquiry";
+
+  const normalized = requestedTopic.trim().toLowerCase();
+  const aliases: Record<string, string> = {
+    careers: "Careers",
+    career: "Careers",
+    expansion: "Expansion",
+    partnership: "Partnership",
+    partner: "Partnership",
+    safety: "Safety concern",
+    support: "General inquiry",
+    technical: "Technical issue",
+    issue: "Technical issue",
+    general: "General inquiry",
+  };
+
+  return (
+    topicOptions.find((topic) => topic.toLowerCase() === normalized) ??
+    aliases[normalized] ??
+    "General inquiry"
+  );
+}
+
+function buildPrefillMessage(requestedRole: string | null, requestedCity: string | null) {
+  if (requestedRole) {
+    return `I would like to discuss the role: ${requestedRole}.`;
+  }
+
+  if (requestedCity) {
+    return `I would like to request launch coverage in ${requestedCity}.`;
+  }
+
+  return "";
+}
+
+export default function Contact() {
+  const [searchParams] = useSearchParams();
+  const requestedTopic = searchParams.get("topic");
+  const requestedRole = searchParams.get("role");
+  const requestedCity = searchParams.get("city");
+
+  const [formState, setFormState] = React.useState({
+    name: "",
+    email: "",
+    topic: resolveTopicPrefill(requestedTopic),
+    message: buildPrefillMessage(requestedRole, requestedCity),
+  });
+  const [submitted, setSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  React.useEffect(() => {
+    setFormState((current) => ({
+      ...current,
+      topic: resolveTopicPrefill(requestedTopic),
+      message: buildPrefillMessage(requestedRole, requestedCity),
+    }));
+    setSubmitted(false);
+    setError("");
+  }, [requestedCity, requestedRole, requestedTopic]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!formState.name.trim() || !formState.email.trim() || !formState.message.trim()) {
+      setError("Fill in your name, email, and message.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email)) {
+      setError("Enter a valid email address.");
+      return;
+    }
+
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      await submitContactMessage({
+        name: formState.name.trim(),
+        email: formState.email.trim().toLowerCase(),
+        topic: formState.topic,
+        message: formState.message.trim(),
+        requestedRole,
+        requestedCity,
+      });
+      setSubmitted(true);
+    } catch (submissionError) {
+      setError(
+        submissionError instanceof Error
+          ? submissionError.message
+          : "Could not submit the contact message right now.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="site-shell">
+      <section className="section-shell">
+        <div className="section-frame space-y-10">
+          <SectionHeading
+            eyebrow="Contact"
+            title={
+              <>
+                Talk to the team behind the route network.
+              </>
+            }
+            description="Messages submitted here are stored directly in HopIn so the support and operations team can follow up without relying on your mail app."
+          />
+        </div>
+      </section>
+
+      <section className="section-shell pt-0">
+        <div className="section-frame grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <Reveal className="panel p-8 md:p-10">
+            <div className="space-y-6">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+                  Send a message
+                </p>
+                <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+                  Tell us what you need.
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label htmlFor="contact-name" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                      Name
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      value={formState.name}
+                      onChange={(event) => {
+                        setSubmitted(false);
+                        setError("");
+                        setFormState((current) => ({ ...current, name: event.target.value }));
+                      }}
+                      className="field-shell"
+                      placeholder="Aarav Singh"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="contact-email" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                      Email
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      value={formState.email}
+                      onChange={(event) => {
+                        setSubmitted(false);
+                        setError("");
+                        setFormState((current) => ({ ...current, email: event.target.value }));
+                      }}
+                      className="field-shell"
+                      placeholder="name@company.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="contact-topic" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                    Topic
+                  </label>
+                  <select
+                    id="contact-topic"
+                    value={formState.topic}
+                    onChange={(event) => {
+                      setSubmitted(false);
+                      setError("");
+                      setFormState((current) => ({ ...current, topic: event.target.value }));
+                    }}
+                    className="field-shell"
+                  >
+                    {topicOptions.map((topic) => (
+                      <option key={topic} value={topic}>
+                        {topic}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="contact-message" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    value={formState.message}
+                    onChange={(event) => {
+                      setSubmitted(false);
+                      setError("");
+                      setFormState((current) => ({ ...current, message: event.target.value }));
+                    }}
+                    className="field-shell-lg"
+                    placeholder="Describe the route problem, partnership idea, or support issue."
+                  />
+                </div>
+
+                {error ? <p className="text-sm text-brand-warning">{error}</p> : null}
+                {submitted ? (
+                  <p className="text-sm text-brand-success" aria-live="polite">
+                    Your message was submitted to HopIn support.
+                  </p>
+                ) : null}
+
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <Button type="submit" size="lg" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending" : "Send message"}
+                  </Button>
+                  <a
+                    href="mailto:help@hopin.co"
+                    className="inline-flex items-center justify-center rounded-full border border-brand-border px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-text-primary hover:bg-brand-surface-soft"
+                  >
+                    Email directly
+                  </a>
+                </div>
+              </form>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6">
+            <Reveal className="panel p-8">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+                <Mail size={22} />
+              </div>
+              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                Email support
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+                For direct outreach outside the in-app queue, including product issues and partnerships.
+              </p>
+              <a href="mailto:help@hopin.co" className="mt-4 inline-block text-sm font-semibold text-brand-text-primary hover:text-brand-accent">
+                help@hopin.co
+              </a>
+            </Reveal>
+
+            <Reveal className="panel p-8" delay={0.05}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+                <Phone size={22} />
+              </div>
+              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                Phone support
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+                Available for urgent rider and driver support escalations.
+              </p>
+              <a href="tel:+918045678900" className="mt-4 inline-block text-sm font-semibold text-brand-text-primary hover:text-brand-accent">
+                +91 80 4567 8900
+              </a>
+            </Reveal>
+
+            <Reveal className="panel-dark p-8" delay={0.1}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/8 text-brand-accent">
+                <MapPin size={22} />
+              </div>
+              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-white">
+                Bangalore office
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-white/64">
+                HopIn Technologies Private Limited
+                <br />
+                12, 100 Feet Road, HAL 2nd Stage
+                <br />
+                Indiranagar, Bangalore 560038
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

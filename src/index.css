@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import 'leaflet/dist/leaflet.css';
+@import "tailwindcss";
+
+/* ============================================================
+   HopIn Design System — Monochrome Brutalist Theme
+   ============================================================ */
+@theme {
+  /* Strictly Monochrome Colors */
+  --color-background:           #FFFFFF;
+  --color-background-secondary: #F5F5F5;
+  --color-surface:              #FFFFFF;
+  --color-surface-soft:         #FAFAFA;
+  
+  --color-text-primary:         #000000;
+  --color-text-secondary:       #555555;
+  
+  --color-accent:               #000000;
+  --color-accent-hover:         #333333;
+  --color-accent-soft:          #E0E0E0;
+  
+  --color-border:               #000000; /* Brutalist heavy borders */
+  --color-border-soft:          #E5E5E5;
+  --color-success:              #000000; /* Re-mapped to black for strict monochrome */
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Box Shadows - sharp and stark instead of soft */
+  --shadow-soft:    4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-premium: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+
+  /* Border Radius - sharp or perfect pill */
+  --radius-xl:  0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    cursor: none; /* Hide default cursor globally */
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none;
+  }
+  
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  ::selection {
+    background-color: #000000;
+    color: #FFFFFF;
+  }
+
+  /* Make sure links and buttons also hide default cursor */
+  a, button, input, textarea, select {
+    cursor: none !important;
+  }
+}
+
+/* ============================================================
+   Leaflet Map Overrides (Monochrome)
+   ============================================================ */
+.leaflet-container {
+  font-family: var(--font-sans);
+  cursor: none !important;
+}
+
+.leaflet-control-zoom a {
+  color: var(--color-text-primary) !important;
+  background-color: var(--color-surface) !important;
+  border: 2px solid var(--color-border) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+  font-weight: bold;
+}
+
+.leaflet-bar {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Leaflet default marker fix */
+.custom-leaflet-icon {
+  background: transparent;
+  border: none;
+}
+
+/* Custom Grayscale filter for CartoDB base map if needed */
+.leaflet-tile-pane {
+  filter: grayscale(100%) contrast(1.1);
+}
