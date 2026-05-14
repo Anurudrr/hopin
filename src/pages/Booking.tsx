@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
 
-import { RideMap } from "../components/booking/RideMap";
+import { LazyMap } from "../components/LazyMap";
 import { Button, ButtonLink } from "../components/ui/Button";
 import { bookingLocations, supportedCities } from "../content/siteContent";
 import { cn } from "../lib/utils";
@@ -299,7 +299,7 @@ export default function Booking() {
             </div>
 
             <div className="min-h-[460px] md:h-full">
-              <RideMap city={selectedCity} />
+              <LazyMap city={selectedCity} />
             </div>
           </section>
         </div>

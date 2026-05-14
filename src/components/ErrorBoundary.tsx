@@ -1,49 +1,40 @@
-import * as React from 'react';
+import { Component, ReactNode } from 'react'
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
+interface Props { children: ReactNode }
+interface State { hasError: boolean; message: string }
 
-interface State { hasError: boolean; error: Error | null; }
-
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+export class ErrorBoundary extends Component<Props, State> {
+  state: State = { hasError: false, message: '' }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('App crashed:', error, info);
+    return { hasError: true, message: error.message }
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex h-screen items-center justify-center bg-brand-bg px-6">
-          <div className="panel-dark max-w-md space-y-6 p-10 text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-accent">
-              Application Error
-            </p>
-            <h1 className="text-3xl font-semibold tracking-[-0.04em] text-white">
-              Something Crashed
-            </h1>
-            <p className="text-sm leading-6 text-white/64">
-              {this.state.error?.message}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full rounded-full bg-brand-accent px-5 py-3 text-sm font-medium uppercase tracking-[0.22em] text-brand-surface-strong hover:bg-brand-accent-hover"
-            >
-              Reload App
-            </button>
-          </div>
+        <div style={{
+          minHeight: '100vh', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          background: '#000', color: '#fff', fontFamily: 'monospace', padding: 24
+        }}>
+          <h1 style={{ fontSize: 48, fontWeight: 900, marginBottom: 16 }}>ERROR</h1>
+          <p style={{ fontSize: 13, color: '#666', maxWidth: 480, textAlign: 'center' }}>
+            {this.state.message || 'Something went wrong. Please refresh.'}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              marginTop: 32, padding: '12px 24px', background: '#fff', color: '#000',
+              border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+              textTransform: 'uppercase', letterSpacing: '0.1em'
+            }}
+          >
+            Reload
+          </button>
         </div>
-      );
+      )
     }
-    return this.props.children;
+    return this.props.children
   }
 }
