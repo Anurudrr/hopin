@@ -1,85 +1,65 @@
-# HopIn: Premium Monochrome Ride-Sharing
+# HopIn
 
-HopIn is a full-stack shared-mobility web application designed for Indian city corridors. It features a complete end-to-end booking, routing, and driver dispatch system.
+HopIn is a shared urban mobility web app for Indian cities. The frontend is built with React 19, Vite, TypeScript, Zustand, Framer Motion, React Leaflet, and Tailwind CSS v4. Production data and authentication now run directly on Supabase, so the app deploys cleanly on Vercel without a persistent Node server.
 
-**Aesthetic Focus:** The frontend has been completely overhauled to feature an "Awwwards-level" **Brutalist Monochrome Design** (inspired by Tribe Stays). This includes stark black-and-white contrasts, massive typography, heavy borders, a custom Framer Motion cursor, and subtle magnetic hover interactions.
+## Tech Stack
 
-## 🛠 Tech Stack
+- React 19 + Vite + TypeScript
+- Tailwind CSS v4
+- Zustand
+- Framer Motion
+- React Leaflet
+- Supabase Auth + Postgres
 
-**Frontend:**
-- React 19 + Vite
-- Tailwind CSS v4 (Strict Monochrome Theme)
-- Framer Motion (Page transitions, custom cursors, magnetic buttons)
-- Zustand (Client state & auth management)
-- Lucide React (Icons)
-- React Leaflet (High-contrast grayscale routing maps)
-
-**Backend:**
-- Node.js API server (in `backend/`)
-- SQLite persistence via `node:sqlite`
-- Custom JWT-based Authentication
-
-## ✨ Features
-
-- **Brutalist UI/UX:** A striking editorial aesthetic with zero rounded corners, 4px/8px harsh drop shadows, and an animated custom cursor that inverts colors.
-- **Micro-Interactions:** Magnetic pull effects on primary call-to-actions and a subtle global noise texture overlay.
-- **Authentication:** Account registration and login with persistent server-side sessions.
-- **Rider Flow:** Onboarding, saved city preferences, profile management, and live booking flows.
-- **Driver Flow:** Application processing with document confirmations, vehicle metadata, and live dashboard.
-- **Interactive Routing:** Real-time B&W route visualizations using Leaflet.
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 22 or newer
-
-### Installation
+## Local Development
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
-2. Setup Environment Variables:
-Copy `.env.example` to `.env`:
+2. Copy the env template and fill in your Supabase values:
+
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-### Local Development
-
-Start both the API and Vite dev server simultaneously:
+3. Run the Vite dev server:
 
 ```bash
 npm run dev
 ```
 
-- The **frontend** runs on `http://localhost:3000`
-- The **backend API** runs on `http://localhost:4100` (The frontend proxies `/api` requests to this port).
+The app runs on `http://localhost:3000`.
 
-## 🎨 Design System Guidelines (For Contributors)
+## Supabase Setup
 
-To maintain the strict Brutalist aesthetic, please adhere to these rules when adding new components:
-1. **Colors:** Use *only* pure black (`#000000`), pure white (`#FFFFFF`), or strict grays. Avoid all color accents (e.g., blue, orange, green).
-2. **Borders:** All borders must be sharp (0px border-radius) and thick (typically 2px to 4px).
-3. **Shadows:** Use the custom brutalist shadow classes (`shadow-soft` or `shadow-premium`) which define hard, non-blurred drop shadows (e.g., `4px 4px 0px 0px rgba(0,0,0,1)`).
-4. **Typography:** Use uppercase `font-black` or `font-bold` heavily for headings and interactive elements.
-5. **Cursor:** Ensure interactive elements trigger the global `CustomCursor` inversion by keeping them standard clickable elements or wrapping them appropriately.
+The repo includes SQL migrations in [supabase/migrations](/C:/Users/rajaw/Downloads/hopin%20(9)/supabase/migrations) for:
 
-## 📦 Production Build
+- Core HopIn tables and RLS policies
+- The `book_ride` booking RPC
+- The `cancel_booking` booking-cancellation RPC
 
-Build the frontend:
+Apply those migrations in your Supabase project before using the production flows.
+
+## Build
+
 ```bash
 npm run build
 ```
 
-Serve the built app and API from one process:
+Preview the production bundle locally with:
+
 ```bash
-npm run start
+npm run preview
 ```
 
-## 🗄 Data Storage
+## Deploying to Vercel
 
-- SQLite database path: `data/hopin.sqlite` by default
-- The `data/` directory is ignored by git
-- Demo dispatch drivers are seeded automatically for local testing
+Set these environment variables in the Vercel dashboard:
+
+- `VITE_SUPABASE_URL` — from Supabase project Settings > API
+- `VITE_SUPABASE_ANON_KEY` — from Supabase project Settings > API
+
+The `VITE_` prefix is required so Vite exposes the values to the browser bundle.

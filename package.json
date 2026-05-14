@@ -4,13 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "dev:client": "vite --port=3000 --host=0.0.0.0",
-    "dev:server": "tsx backend/server.ts",
+    "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "tsx backend/server.ts",
-    "clean": "node -e \"require('fs').rmSync('dist',{ recursive: true, force: true })\"",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -38,7 +34,6 @@
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "tailwindcss": "^4.1.14",
-    "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.3"
   }
