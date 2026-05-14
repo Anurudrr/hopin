@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { loginAccount, registerAccount } from '../lib/api';
 import { useAuthStore } from '../store/useAuthStore';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mapAuthErrorMessage } from '../lib/errors';
 
 // Validation schemas
 const loginSchema = z.object({
@@ -18,19 +18,23 @@ const signupSchema = z.object({
   name: z.string().min(2, { message: "Min 2 chars" }),
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(6, { message: "Min 6 chars" }),
-  phone: z.string().min(10, { message: "Min 10 digits" }).optional().or(z.literal('')),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   
-  const { user, setSession } = useAuthStore();
+  const { user, profile, loading, signIn, signUp } = useAuthStore();
+
+  useEffect(() => {
+    setIsLogin(searchParams.get('mode') !== 'signup');
+  }, [searchParams]);
 
   const { register: registerLogin, handleSubmit: handleLoginSubmit, formState: { errors: loginErrors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -40,21 +44,26 @@ const Auth = () => {
     resolver: zodResolver(signupSchema),
   });
 
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-white">
+        <span className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></span>
+      </div>
+    );
+  }
+
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={profile?.onboarding_completed ? "/dashboard" : "/onboarding"} replace />;
   }
 
   const onLogin = async (data: LoginFormValues) => {
     setIsLoading(true);
     setError(null);
+    setSuccessMsg(null);
     try {
-      const session = await loginAccount({
-        email: data.email,
-        password: data.password,
-      });
-      setSession(session);
+      await signIn(data.email, data.password);
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(mapAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -65,16 +74,10 @@ const Auth = () => {
     setError(null);
     setSuccessMsg(null);
     try {
-      const session = await registerAccount({
-        email: data.email,
-        password: data.password,
-        fullName: data.name,
-        phone: data.phone || "0000000000",
-        role: "rider"
-      });
-      setSession(session);
+      await signUp(data.email, data.password, data.name);
+      setSuccessMsg('Check your email to confirm your account before signing in.');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up');
+      setError(mapAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }

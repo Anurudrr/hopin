@@ -2,13 +2,13 @@ import * as React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Outlet, useLocation } from "react-router-dom";
 
-import { useAuthStore } from "../../store/useAuthStore";
 import { PageMeta } from "../site/PageMeta";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
 
 const PRODUCT_FLOW_PATHS = [
   "/auth",
+  "/login",
   "/book",
   "/dashboard",
   "/profile",
@@ -34,6 +34,11 @@ const ROUTE_META: Record<
       "Learn how HopIn designs shared commuting around repeat corridors, readable trip decisions, and trust under pressure.",
   },
   "/auth": {
+    title: "HopIn Account Access",
+    description:
+      "Create a HopIn account or log in to book rides, manage your profile, and continue onboarding.",
+  },
+  "/login": {
     title: "HopIn Account Access",
     description:
       "Create a HopIn account or log in to book rides, manage your profile, and continue onboarding.",
@@ -116,14 +121,9 @@ function resolveMeta(pathname: string) {
 
 export const MainLayout = () => {
   const { pathname, hash } = useLocation();
-  const initialize = useAuthStore((state) => state.initialize);
   const shouldReduceMotion = useReducedMotion();
   const isProductFlow = PRODUCT_FLOW_PATHS.includes(pathname);
   const meta = resolveMeta(pathname);
-
-  React.useEffect(() => {
-    void initialize();
-  }, [initialize]);
 
   React.useEffect(() => {
     if (hash) {

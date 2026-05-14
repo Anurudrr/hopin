@@ -13,9 +13,9 @@ const sections = [
 ];
 
 export default function Profile() {
-  const { profile, signOut, loading, initialized } = useAuthStore();
+  const { user, profile, signOut, loading } = useAuthStore();
 
-  if (!initialized || loading) {
+  if (loading || (user && !profile)) {
     return (
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center justify-center">
         <div className="panel flex items-center gap-4 px-6 py-5">
@@ -36,7 +36,7 @@ export default function Profile() {
           <h1 className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
             Sign in to view your profile.
           </h1>
-          <ButtonLink to="/auth" size="lg" className="mt-8">
+          <ButtonLink to="/login" size="lg" className="mt-8">
             Go to login
           </ButtonLink>
         </div>

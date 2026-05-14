@@ -10,6 +10,7 @@ import { Button, ButtonLink } from "../ui/Button";
 
 const compactLabels: Record<string, string> = {
   "/auth": "Account access",
+  "/login": "Account access",
   "/book": "Book a ride",
   "/dashboard": "Dashboard",
   "/driver-signup": "Driver application",
@@ -120,12 +121,12 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
             ) : (
               <>
                 <Link
-                  to="/auth"
+                  to="/login"
                   className="rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/72 hover:bg-white/6 hover:text-white"
                 >
                   Log In
                 </Link>
-                <ButtonLink to="/auth?mode=signup" variant="primary" size="md" className="gap-2">
+                <ButtonLink to="/login?mode=signup" variant="primary" size="md" className="gap-2">
                   Join HopIn
                   <ArrowRight size={14} />
                 </ButtonLink>
@@ -220,7 +221,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
             ) : (
               <>
                 <ButtonLink
-                  to="/auth"
+                  to="/login"
                   onClick={() => setIsOpen(false)}
                   variant="outline"
                   className="w-full border-white/15 text-white hover:bg-white/10"
@@ -228,7 +229,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                   Log In
                 </ButtonLink>
                 <ButtonLink
-                  to="/auth?mode=signup"
+                  to="/login?mode=signup"
                   onClick={() => setIsOpen(false)}
                   variant="primary"
                   className="w-full"

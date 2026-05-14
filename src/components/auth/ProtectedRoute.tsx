@@ -5,14 +5,14 @@ import { useAuthStore } from '../../store/useAuthStore';
 
 export function ProtectedRoute({
   children,
-  requireOnboarding = true,
+  requireOnboarding = false,
 }: {
   children: React.ReactNode;
   requireOnboarding?: boolean;
 }) {
-  const { user, profile, initialized, loading } = useAuthStore();
+  const { user, profile, loading } = useAuthStore();
 
-  if (!initialized || loading) {
+  if (loading) {
     return (
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center justify-center">
         <div className="panel flex items-center gap-4 px-6 py-5">
@@ -24,10 +24,10 @@ export function ProtectedRoute({
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  if (requireOnboarding && !profile?.onboarding_completed) {
+  if (requireOnboarding && profile && !profile.city) {
     return <Navigate to="/onboarding" replace />;
   }
 
