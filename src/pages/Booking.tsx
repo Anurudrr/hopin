@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { LazyMap } from "../components/LazyMap";
 import { Button, ButtonLink } from "../components/ui/Button";
@@ -10,9 +12,9 @@ import { useBookingStore } from "../store/useBookingStore";
 type City = (typeof supportedCities)[number];
 
 export default function Booking() {
+  const navigate = useNavigate();
   const {
-    activeRideId,
-    activeRideStatus,
+    activeRide,
     bookingError,
     cancelSearch,
     clearBookingError,
@@ -30,8 +32,8 @@ export default function Booking() {
   const locations = bookingLocations.filter((location) => location.city === selectedCity);
   const stage = isSearching
     ? "matching"
-    : activeRideId
-      ? activeRideStatus === "searching"
+    : activeRide
+      ? activeRide.status === "searching"
         ? "pending"
         : "active"
       : "select";
@@ -49,6 +51,9 @@ export default function Booking() {
   const handleBooking = async () => {
     clearBookingError();
     await startSearch();
+    if (activeRide) {
+      navigate("/dashboard");
+    }
   };
 
   const handleCityChange = (city: City) => {
@@ -198,8 +203,8 @@ export default function Booking() {
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
                     {stage === "active"
-                      ? `Your route is live with a matched vehicle and co-riders. Ride ID: ${activeRideId}`
-                      : `Your request is stored and waiting for a live driver assignment. Ride ID: ${activeRideId}`}
+                      ? `Your route is live with a matched vehicle and co-riders. Ride ID: ${activeRide?.id}`
+                      : `Your request is stored and waiting for a live driver assignment. Ride ID: ${activeRide?.id}`}
                   </p>
                 </div>
               ) : null}

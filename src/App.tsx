@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
 
 import CustomCursor from "./components/CustomCursor";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -104,6 +105,7 @@ function App() {
     <Router>
       <CustomCursor />
       <AppRoutes />
+      <Toaster position="top-right" richColors />
     </Router>
   );
 }

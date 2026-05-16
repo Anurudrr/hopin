@@ -4,6 +4,7 @@ import { CalendarClock, Car, CheckCircle2, Route, ShieldCheck } from "lucide-rea
 import { bookingLocations } from "../../content/siteContent";
 import { createDriverRide, getDriverDashboardData } from "../../lib/api";
 import { getErrorMessage, logDevError } from "../../lib/errors";
+import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/useAuthStore";
 import type { DriverDashboardData, Ride } from "../../types";
 import { Button, ButtonLink } from "../ui/Button";
@@ -58,6 +59,28 @@ export const DriverDashboard = () => {
   React.useEffect(() => {
     void loadDashboard();
   }, [loadDashboard]);
+
+  React.useEffect(() => {
+    if (!profile?.id) return
+
+    const channel = supabase
+      .channel('driver-rides-' + profile.id)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'rides',
+        filter: `driver_id=eq.${profile.id}`,
+      }, () => { void loadDashboard() })
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'bookings',
+        filter: `driver_id=eq.${profile.id}`,
+      }, () => { void loadDashboard() })
+      .subscribe()
+
+    return () => { void supabase.removeChannel(channel) }
+  }, [profile?.id, loadDashboard])
 
   React.useEffect(() => {
     if (!cityLocations.length) {

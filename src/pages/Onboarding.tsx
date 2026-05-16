@@ -2,10 +2,11 @@ import * as React from "react";
 import { MapPin, Phone, UserCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { Button } from "../components/ui/Button";
 import { supportedCities } from "../content/siteContent";
-import { updateAccountProfile } from "../lib/api";
+import { updateProfile } from "../lib/api";
 import { getErrorMessage, logDevError } from "../lib/errors";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -18,7 +19,9 @@ export default function Onboarding() {
     full_name: "",
     phone: "",
     city: "",
-    avatar_url: "",
+    gender: "",
+    home_address: "",
+    work_address: "",
   });
 
   React.useEffect(() => {
@@ -41,7 +44,9 @@ export default function Onboarding() {
       full_name: profile.full_name ?? "",
       phone: profile.phone ?? "",
       city: profile.city ?? "",
-      avatar_url: profile.avatar_url ?? "",
+      gender: profile.gender ?? "",
+      home_address: profile.home_address ?? "",
+      work_address: profile.work_address ?? "",
     });
   }, [profile]);
 
@@ -57,17 +62,23 @@ export default function Onboarding() {
     setError(null);
 
     try {
-      await updateAccountProfile({
+      await updateProfile({
         full_name: formData.full_name.trim(),
-        phone: formData.phone.trim() || null,
+        phone: formData.phone.trim() || undefined,
         city: formData.city,
-        avatar_url: formData.avatar_url.trim() || null,
+        gender: formData.gender || undefined,
+        home_address: formData.home_address.trim() || undefined,
+        work_address: formData.work_address.trim() || undefined,
+        onboarding_completed: true,
       });
       await fetchProfile();
+      toast.success("Profile completed!");
       navigate("/dashboard");
     } catch (submissionError) {
       logDevError("Onboarding.submit", submissionError);
-      setError(getErrorMessage(submissionError, "Could not save onboarding right now."));
+      const message = getErrorMessage(submissionError, "Could not save onboarding right now.");
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -142,7 +153,7 @@ export default function Onboarding() {
 
               <div className="space-y-2">
                 <label htmlFor="city" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
-                  Primary city
+                  Primary city *
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
@@ -186,19 +197,57 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="avatar-url" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
-                  Avatar URL
+                <label htmlFor="gender" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  Gender (Optional)
                 </label>
-                <input
-                  id="avatar-url"
-                  type="url"
-                  value={formData.avatar_url}
+                <select
+                  id="gender"
+                  value={formData.gender}
                   onChange={(event) => {
                     setError(null);
-                    setFormData((current) => ({ ...current, avatar_url: event.target.value }));
+                    setFormData((current) => ({ ...current, gender: event.target.value }));
                   }}
                   className="field-shell"
-                  placeholder="https://example.com/avatar.png"
+                >
+                  <option value="">Select gender</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="home-address" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  Home Address (Optional)
+                </label>
+                <input
+                  id="home-address"
+                  type="text"
+                  value={formData.home_address}
+                  onChange={(event) => {
+                    setError(null);
+                    setFormData((current) => ({ ...current, home_address: event.target.value }));
+                  }}
+                  className="field-shell"
+                  placeholder="123 Main St, Apt 4"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="work-address" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  Work Address (Optional)
+                </label>
+                <input
+                  id="work-address"
+                  type="text"
+                  value={formData.work_address}
+                  onChange={(event) => {
+                    setError(null);
+                    setFormData((current) => ({ ...current, work_address: event.target.value }));
+                  }}
+                  className="field-shell"
+                  placeholder="456 Office Blvd, Suite 100"
                 />
               </div>
             </div>

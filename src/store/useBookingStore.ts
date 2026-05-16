@@ -1,13 +1,14 @@
 import { create } from "zustand";
+import { toast } from "sonner";
 
-import { cancelRideBooking, createRideBooking } from "../lib/api";
-import type { BookingStatus } from "../types";
+import { bookRide, cancelBooking } from "../lib/api";
+import type { Booking } from "../types";
 
 export interface Location {
   lng: number;
   lat: number;
   address: string;
-  city?: "Mumbai" | "Delhi" | "Bangalore" | "Hyderabad" | "Pune";
+  city?: "Mumbai" | "Delhi" | "Bangalore" | "Hyderabad" | "Pune" | "Chennai";
 }
 
 export interface RideRequest {
@@ -23,8 +24,7 @@ export interface RideRequest {
 interface BookingState {
   currentRequest: Partial<RideRequest>;
   isSearching: boolean;
-  activeRideId: string | null;
-  activeRideStatus: BookingStatus | null;
+  activeRide: Booking | null;
   bookingError: string | null;
   clearBookingError: () => void;
   setPickup: (loc: Location | null) => void;
@@ -62,8 +62,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     seats: 1,
   },
   isSearching: false,
-  activeRideId: null,
-  activeRideStatus: null,
+  activeRide: null,
   bookingError: null,
   clearBookingError: () => set({ bookingError: null }),
 
@@ -79,8 +78,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
           pickup,
           fareEstimate: getFareEstimate(pickup, destination, seats),
         },
-        activeRideId: null,
-        activeRideStatus: null,
+        activeRide: null,
         isSearching: false,
         bookingError: null,
       };
@@ -99,8 +97,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
           destination,
           fareEstimate: getFareEstimate(pickup, destination, seats),
         },
-        activeRideId: null,
-        activeRideStatus: null,
+        activeRide: null,
         isSearching: false,
         bookingError: null,
       };
@@ -119,8 +116,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
           seats: seatCount,
           fareEstimate: getFareEstimate(pickup, destination, seatCount),
         },
-        activeRideId: null,
-        activeRideStatus: null,
+        activeRide: null,
         isSearching: false,
         bookingError: null,
       };
@@ -131,81 +127,90 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     const { pickup, destination, seats } = get().currentRequest;
 
     if (!pickup || !destination) {
+      const msg = "Select both pickup and destination before starting a search.";
       set({
-        bookingError: "Select both pickup and destination before starting a search.",
+        bookingError: msg,
         isSearching: false,
-        activeRideId: null,
-        activeRideStatus: null,
+        activeRide: null,
       });
+      toast.error(msg);
       return;
     }
 
     if (pickup.address === destination.address) {
+      const msg = "Pickup and destination need to be different locations.";
       set({
-        bookingError: "Pickup and destination need to be different locations.",
+        bookingError: msg,
         isSearching: false,
-        activeRideId: null,
-        activeRideStatus: null,
+        activeRide: null,
       });
-      return;
-    }
-
-    if (!pickup.city) {
-      set({
-        bookingError: "Pickup city is missing from the selected route.",
-        isSearching: false,
-        activeRideId: null,
-        activeRideStatus: null,
-      });
+      toast.error(msg);
       return;
     }
 
     set({ isSearching: true, bookingError: null });
 
     try {
-      const { booking } = await createRideBooking({
-        city: pickup.city,
-        pickup,
-        destination,
-        seats: seats ?? 1,
-      });
+      const bookingId = await bookRide(
+        "", // rideId will be determined by matching in the backend
+        seats ?? 1,
+        pickup.address, pickup.lat, pickup.lng,
+        destination.address, destination.lat, destination.lng
+      );
 
       set({
-        activeRideId: booking.id,
-        activeRideStatus: booking.status,
+        activeRide: {
+          id: bookingId,
+          ride_id: "",
+          rider_id: "",
+          driver_id: null,
+          city: pickup.city || "",
+          pickup_address: pickup.address,
+          pickup_lat: pickup.lat,
+          pickup_lng: pickup.lng,
+          dest_address: destination.address,
+          dest_lat: destination.lat,
+          dest_lng: destination.lng,
+          fare_total: get().currentRequest.fareEstimate || 0,
+          fare_shared: get().currentRequest.fareEstimate || 0,
+          seats: seats || 1,
+          status: "confirmed",
+          created_at: new Date().toISOString(),
+          departure_time: null,
+          driver_name: null,
+          vehicle_label: null,
+        } as Booking,
         bookingError: null,
         isSearching: false,
-        currentRequest: {
-          ...get().currentRequest,
-          fareEstimate: booking.fare_total,
-        },
       });
+      toast.success("Ride booked!");
     } catch (error) {
-      console.error("Booking failed:", error);
+      const msg = error instanceof Error ? error.message : "Could not find a ride. Please try again.";
       set({
         isSearching: false,
-        activeRideId: null,
-        activeRideStatus: null,
-        bookingError: error instanceof Error ? error.message : "Could not find a ride. Please try again.",
+        activeRide: null,
+        bookingError: msg,
       });
+      toast.error(msg);
     }
   },
 
   cancelSearch: async () => {
-    const { activeRideId } = get();
+    const { activeRide } = get();
 
-    if (activeRideId) {
+    if (activeRide) {
       try {
-        await cancelRideBooking(activeRideId);
+        await cancelBooking(activeRide.id);
+        toast.success("Ride cancelled.");
       } catch (error) {
-        console.error("Ride cancellation failed:", error);
+        const msg = error instanceof Error ? error.message : "Could not cancel ride.";
+        toast.error(msg);
       }
     }
 
     set({
       isSearching: false,
-      activeRideId: null,
-      activeRideStatus: null,
+      activeRide: null,
       bookingError: null,
     });
   },
@@ -214,8 +219,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     set({
       currentRequest: { seats: 1 },
       isSearching: false,
-      activeRideId: null,
-      activeRideStatus: null,
+      activeRide: null,
       bookingError: null,
     }),
 }));

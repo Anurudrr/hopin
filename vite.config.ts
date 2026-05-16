@@ -13,21 +13,16 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-
-          if (id.includes('leaflet') || id.includes('react-leaflet')) {
-            return 'maps-vendor';
-          }
-
-          if (id.includes('motion')) {
-            return 'motion-vendor';
-          }
-
-          return 'vendor';
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-map': ['leaflet', 'react-leaflet'],
+          'vendor-ui': ['zustand', 'lucide-react'],
         },
       },
     },
+    chunkSizeWarningLimit: 600,
   },
   server: {
     hmr: process.env.DISABLE_HMR !== 'true',

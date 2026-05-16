@@ -2,6 +2,7 @@ import * as React from "react";
 import { CalendarDays, CarFront, FileText, ShieldCheck } from "lucide-react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { Button, ButtonLink } from "../components/ui/Button";
 import { submitDriverApplication } from "../lib/api";
@@ -68,10 +69,13 @@ export default function DriverOnboarding() {
         plate: formData.plate.trim().toUpperCase(),
       });
       await fetchProfile();
+      toast.success("Application submitted!");
       setCompleted(true);
     } catch (submissionError) {
       logDevError("DriverOnboarding.submit", submissionError);
-      setError(getErrorMessage(submissionError, "Could not submit the driver application."));
+      const message = getErrorMessage(submissionError, "Could not submit the driver application.");
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -210,20 +214,32 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="document-url" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
-                  Document URL
+                <label htmlFor="document-file" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  Document Upload (PDF or Image)
                 </label>
                 <input
-                  id="document-url"
-                  type="url"
-                  value={formData.documentUrl}
+                  id="document-file"
+                  type="file"
+                  accept=".pdf,image/*"
                   onChange={(event) => {
                     setError(null);
-                    setFormData((current) => ({ ...current, documentUrl: event.target.value }));
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        const dataUrl = e.target?.result as string;
+                        setFormData((current) => ({ ...current, documentUrl: dataUrl }));
+                        toast.success("Document loaded");
+                      };
+                      reader.onerror = () => {
+                        toast.error("Failed to read file");
+                      };
+                      reader.readAsDataURL(file);
+                    }
                   }}
                   className="field-shell"
-                  placeholder="https://example.com/license-scan.pdf"
                 />
+                <p className="text-xs text-brand-text-secondary">Upload your license scan or photo</p>
               </div>
             </div>
 

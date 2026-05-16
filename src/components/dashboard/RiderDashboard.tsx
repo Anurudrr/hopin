@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChevronRight, MapPin, Route } from "lucide-react";
 
 import { getRiderDashboardData } from "../../lib/api";
+import { supabase } from "../../lib/supabase";
 import type { Booking, Profile } from "../../types";
 import { ButtonLink } from "../ui/Button";
 
@@ -66,6 +67,28 @@ export const RiderDashboard = ({ profile }: RiderDashboardProps) => {
       isMounted = false;
     };
   }, [profile?.id]);
+
+  React.useEffect(() => {
+    if (!profile?.id) return
+
+    const channel = supabase
+      .channel('rider-bookings-' + profile.id)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'bookings',
+        filter: `rider_id=eq.${profile.id}`,
+      }, () => { 
+        const loadBookings = async () => {
+          const data = await getRiderDashboardData();
+          setRecentBookings(data.recentBookings ?? []);
+        };
+        void loadBookings();
+      })
+      .subscribe()
+
+    return () => { void supabase.removeChannel(channel) }
+  }, [profile?.id])
 
   const activeBooking =
     recentBookings.find((booking) =>
