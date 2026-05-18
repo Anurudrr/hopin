@@ -1,0 +1,2 @@
+-- This file is deprecated - use 004_fix_bookings_and_profiles_clean.sql instead
+-- All content has been consolidated into the _clean version
