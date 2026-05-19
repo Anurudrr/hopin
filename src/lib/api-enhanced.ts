@@ -42,7 +42,7 @@ export async function getAvailableRides(city: string): Promise<Ride[]> {
         .gt('seats_available', 0)
         .gte('departure_time', new Date().toISOString())
         .order('departure_time', { ascending: true })
-    )
+    );
 
     if (error) {
       logDevError('getAvailableRides', error)
@@ -248,6 +248,8 @@ export async function getRiderDashboardData(): Promise<RiderDashboardData> {
 
     if (error) {
       logDevError('getRiderDashboardData', error)
+      // Return empty array on error instead of throwing
+      // User sees "No bookings" which is better than error state
       return { recentBookings: [] }
     }
 
@@ -318,6 +320,7 @@ export async function submitDriverApplication(input: DriverApplicationInput): Pr
       throw new Error(mapApiErrorMessage(existingVehicleResult.error, 'verifying vehicle'))
     }
 
+    // Handle document upload if provided
     if (input.documentUrl && input.documentUrl.startsWith('data:')) {
       const uploadResponse = await fetch(input.documentUrl)
       const uploadBlob = await uploadResponse.blob()
@@ -336,8 +339,10 @@ export async function submitDriverApplication(input: DriverApplicationInput): Pr
 
       documentPath = filePath
     }
+    
     documentPath = documentPath || existingApplicationResult.data?.document_url || ''
 
+    // Update or insert application
     const { error: appError } = await supabase.from('driver_applications').upsert({
       user_id: user.id,
       license_number: input.licenseNumber,
@@ -351,6 +356,7 @@ export async function submitDriverApplication(input: DriverApplicationInput): Pr
       throw new Error(mapApiErrorMessage(appError, 'submitting application'))
     }
 
+    // Update or insert vehicle
     const vehiclePayload = {
       driver_id: user.id,
       make: input.make,

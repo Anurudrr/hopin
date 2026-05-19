@@ -117,8 +117,9 @@ export default function DriverOnboarding() {
               Application submitted
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-white/62">
-              Your license details, review document link, and vehicle metadata are now stored in
-              Supabase. Open the dashboard to start publishing shared rides.
+              Your license details, secure document path, and vehicle metadata are now stored for
+              review. You can publish rides only after the application is approved and your account
+              is activated as a driver.
             </p>
             <Button size="lg" className="mt-8" onClick={() => navigate("/dashboard")}>
               Return to dashboard
@@ -140,8 +141,8 @@ export default function DriverOnboarding() {
                 Add the license and vehicle details needed to schedule rides.
               </h1>
               <p className="text-base leading-8 text-white/62">
-                This flow writes directly to `driver_applications` and `vehicles`, then upgrades
-                your profile role to driver.
+                This flow writes directly to `driver_applications` and `vehicles`, then sends your
+                account into the driver approval queue.
               </p>
             </div>
 

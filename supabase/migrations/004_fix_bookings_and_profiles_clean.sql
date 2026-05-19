@@ -2,8 +2,41 @@
 ALTER TABLE public.bookings DROP CONSTRAINT IF EXISTS bookings_status_check;
 
 -- 2. Rename columns to match TypeScript interface
-ALTER TABLE public.bookings RENAME COLUMN seats_booked TO seats;
-ALTER TABLE public.bookings RENAME COLUMN total_fare TO fare_total;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'bookings'
+      AND column_name = 'seats_booked'
+  ) AND NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'bookings'
+      AND column_name = 'seats'
+  ) THEN
+    EXECUTE 'ALTER TABLE public.bookings RENAME COLUMN seats_booked TO seats';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'bookings'
+      AND column_name = 'total_fare'
+  ) AND NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'bookings'
+      AND column_name = 'fare_total'
+  ) THEN
+    EXECUTE 'ALTER TABLE public.bookings RENAME COLUMN total_fare TO fare_total';
+  END IF;
+END;
+$$;
 
 -- 3. Add all missing columns to bookings
 ALTER TABLE public.bookings
@@ -36,36 +69,67 @@ ALTER TABLE public.profiles
 
 -- 6. Keep profile email in sync with auth.users
 CREATE OR REPLACE FUNCTION public.sync_user_email()
-RETURNS trigger AS $$
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  UPDATE public.profiles SET email = NEW.email WHERE id = NEW.id;
+  UPDATE public.profiles
+  SET
+    email = NEW.email,
+    is_email_verified = NEW.email_confirmed_at IS NOT NULL
+  WHERE id = NEW.id;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 DROP TRIGGER IF EXISTS on_auth_user_email_updated ON auth.users;
 CREATE TRIGGER on_auth_user_email_updated
-  AFTER UPDATE OF email ON auth.users
-  FOR EACH ROW EXECUTE PROCEDURE public.sync_user_email();
+  AFTER UPDATE OF email, email_confirmed_at ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.sync_user_email();
 
 -- 7. Fix handle_new_user to include email
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger AS $$
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, email)
-  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.email)
+  INSERT INTO public.profiles (id, full_name, email, is_email_verified)
+  VALUES (
+    NEW.id,
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.email,
+    NEW.email_confirmed_at IS NOT NULL
+  )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- 8. Drop and recreate book_ride with correct column names and full data
-DROP FUNCTION IF EXISTS public.book_ride;
+DROP FUNCTION IF EXISTS public.book_ride(
+  uuid,
+  uuid,
+  integer,
+  text,
+  double precision,
+  double precision,
+  text,
+  double precision,
+  double precision
+);
 CREATE OR REPLACE FUNCTION public.book_ride(
   p_ride_id uuid, p_rider_id uuid, p_seats integer,
   p_pickup_address text, p_pickup_lat double precision, p_pickup_lng double precision,
   p_dest_address text, p_dest_lat double precision, p_dest_lng double precision
-) RETURNS uuid AS $$
+) RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
   v_fare_per_seat numeric; v_driver_id uuid; v_city text;
   v_departure_time timestamptz; v_driver_name text; v_vehicle_label text;
@@ -101,13 +165,17 @@ BEGIN
 
   RETURN v_booking_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- 9. Drop and recreate cancel_booking with correct column names
-DROP FUNCTION IF EXISTS public.cancel_booking;
+DROP FUNCTION IF EXISTS public.cancel_booking(uuid, uuid);
 CREATE OR REPLACE FUNCTION public.cancel_booking(
   p_booking_id uuid, p_rider_id uuid
-) RETURNS void AS $$
+) RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE v_ride_id uuid; v_seats integer;
 BEGIN
   SELECT ride_id, seats INTO v_ride_id, v_seats
@@ -120,11 +188,13 @@ BEGIN
   UPDATE public.bookings SET status = 'cancelled' WHERE id = p_booking_id;
   UPDATE public.rides SET seats_available = seats_available + v_seats WHERE id = v_ride_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- 10. RLS: drivers can see bookings on their rides
-CREATE POLICY IF NOT EXISTS "Drivers see bookings on their rides"
-  ON public.bookings FOR SELECT
+DROP POLICY IF EXISTS "Drivers see bookings on their rides" ON public.bookings;
+CREATE POLICY "Drivers see bookings on their rides"
+  ON public.bookings
+  FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM public.rides
     WHERE rides.id = bookings.ride_id AND rides.driver_id = auth.uid()
@@ -135,10 +205,12 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('driver-documents', 'driver-documents', false)
 ON CONFLICT DO NOTHING;
 
-CREATE POLICY IF NOT EXISTS "Drivers upload own documents"
+DROP POLICY IF EXISTS "Drivers upload own documents" ON storage.objects;
+CREATE POLICY "Drivers upload own documents"
   ON storage.objects FOR INSERT
   WITH CHECK (bucket_id = 'driver-documents' AND auth.uid()::text = (storage.foldername(name))[1]);
 
-CREATE POLICY IF NOT EXISTS "Drivers read own documents"
+DROP POLICY IF EXISTS "Drivers read own documents" ON storage.objects;
+CREATE POLICY "Drivers read own documents"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'driver-documents' AND auth.uid()::text = (storage.foldername(name))[1]);

@@ -1,13 +1,14 @@
 import * as React from "react";
-import { Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
+import { CalendarClock, Car, Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import { LazyMap } from "../components/LazyMap";
 import { Button, ButtonLink } from "../components/ui/Button";
-import { bookingLocations, supportedCities } from "../content/siteContent";
+import { supportedCities } from "../content/siteContent";
+import { getAvailableRides } from "../lib/api";
 import { cn } from "../lib/utils";
 import { useBookingStore } from "../store/useBookingStore";
+import type { Ride } from "../types";
 
 type City = (typeof supportedCities)[number];
 
@@ -21,37 +22,62 @@ export default function Booking() {
     currentRequest,
     isSearching,
     reset,
-    setDestination,
-    setPickup,
+    selectRide,
+    selectedRide,
     setSeats,
     startSearch,
   } = useBookingStore();
 
   const [selectedCity, setSelectedCity] = React.useState<City>("Mumbai");
+  const [rides, setRides] = React.useState<Ride[]>([]);
+  const [loadingRides, setLoadingRides] = React.useState(true);
+  const [ridesError, setRidesError] = React.useState<string | null>(null);
 
-  const locations = bookingLocations.filter((location) => location.city === selectedCity);
-  const stage = isSearching
-    ? "matching"
-    : activeRide
-      ? activeRide.status === "searching"
-        ? "pending"
-        : "active"
-      : "select";
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadRides = async () => {
+      setLoadingRides(true);
+      setRidesError(null);
+
+      try {
+        const data = await getAvailableRides(selectedCity);
+        if (!isMounted) return;
+        setRides(data);
+      } catch (error) {
+        if (!isMounted) return;
+        setRides([]);
+        setRidesError(error instanceof Error ? error.message : "Could not load live rides.");
+      } finally {
+        if (isMounted) {
+          setLoadingRides(false);
+        }
+      }
+    };
+
+    void loadRides();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCity]);
+
+  const stage = isSearching ? "matching" : activeRide ? "active" : selectedRide ? "ready" : "select";
   const routeSummaryCards = [
-    `${locations.length} mapped zones in ${selectedCity}`,
+    `${rides.length} live rides in ${selectedCity}`,
     stage === "matching"
-      ? "Matching in progress"
-      : stage === "pending"
-        ? "Request queued"
-        : stage === "active"
-          ? "Ride active"
-          : "Ready to search",
+      ? "Booking in progress"
+      : stage === "active"
+        ? "Ride booked"
+        : selectedRide
+          ? `${selectedRide.seats_available} seats currently open`
+          : "Choose a route",
   ];
 
   const handleBooking = async () => {
     clearBookingError();
-    await startSearch();
-    if (activeRide) {
+    const booking = await startSearch();
+    if (booking) {
       navigate("/dashboard");
     }
   };
@@ -69,10 +95,11 @@ export default function Booking() {
             <div className="space-y-5">
               <div className="eyebrow">Book a route</div>
               <h1 className="text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
-                Choose a corridor, review the fare, and start matching.
+                Browse live shared rides and reserve your seat.
               </h1>
               <p className="text-sm leading-7 text-brand-text-secondary">
-                The booking surface now uses simpler native selectors for pickup and destination, which removes the brittle custom dropdown behavior from the old UI.
+                Choose a city, review the currently published driver routes, and book against a
+                real ride instead of a placeholder match request.
               </p>
             </div>
 
@@ -95,75 +122,94 @@ export default function Booking() {
               ))}
             </div>
 
-            <div className="grid gap-5">
-              <label htmlFor="booking-pickup" className="space-y-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
-                  Pickup
-                </span>
-                <select
-                  id="booking-pickup"
-                  value={currentRequest.pickup?.address || ""}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    const selected = locations.find((location) => location.address === value) || null;
-                    setPickup(selected);
-                  }}
-                  className="field-shell"
-                >
-                  <option value="">Select pickup point</option>
-                  {locations.map((location) => (
-                    <option key={location.address} value={location.address}>
-                      {location.address}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            <div className="grid gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  Live rides
+                </p>
+                <div className="mt-3 grid gap-3">
+                  {loadingRides ? (
+                    <div className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5 text-sm text-brand-text-secondary">
+                      Loading live rides for {selectedCity}.
+                    </div>
+                  ) : rides.length ? (
+                    rides.map((ride) => {
+                      const isSelected = selectedRide?.id === ride.id;
 
-              <label htmlFor="booking-destination" className="space-y-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
-                  Destination
-                </span>
-                <select
-                  id="booking-destination"
-                  value={currentRequest.destination?.address || ""}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    const selected = locations.find((location) => location.address === value) || null;
-                    setDestination(selected);
-                  }}
-                  className="field-shell"
-                >
-                  <option value="">Select destination</option>
-                  {locations.map((location) => (
-                    <option key={location.address} value={location.address}>
-                      {location.address}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                      return (
+                        <button
+                          key={ride.id}
+                          type="button"
+                          onClick={() => selectRide(ride)}
+                          className={cn(
+                            "rounded-[1.6rem] border p-5 text-left transition-colors",
+                            isSelected
+                              ? "border-brand-accent bg-brand-accent/10"
+                              : "border-brand-border bg-brand-surface-soft hover:border-brand-accent/40",
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="text-sm font-semibold text-brand-text-primary">
+                                {ride.origin_name} to {ride.destination_name}
+                              </p>
+                              <p className="mt-2 text-sm text-brand-text-secondary">
+                                {new Date(ride.departure_time).toLocaleString()}
+                              </p>
+                              <p className="mt-2 text-sm text-brand-text-secondary">
+                                Driver: {ride.driver?.full_name || "HopIn driver"}
+                              </p>
+                            </div>
+                            <div className="text-right text-sm text-brand-text-secondary">
+                              <p>INR {ride.fare_per_seat} / seat</p>
+                              <p className="mt-2">{ride.seats_available} seats open</p>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5 text-sm text-brand-text-secondary">
+                      No live rides are currently published in {selectedCity}.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {selectedRide ? (
+                <div className="rounded-[1.8rem] border border-brand-accent bg-brand-accent/8 p-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+                    Selected route
+                  </p>
+                  <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                    {selectedRide.origin_name} to {selectedRide.destination_name}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+                    Departure {new Date(selectedRide.departure_time).toLocaleString()} / Driver{" "}
+                    {selectedRide.driver?.full_name || "HopIn driver"} / Vehicle{" "}
+                    {selectedRide.vehicle
+                      ? `${selectedRide.vehicle.color} ${selectedRide.vehicle.make} ${selectedRide.vehicle.model}`
+                      : "Details shared after booking"}
+                  </p>
+                </div>
+              ) : null}
 
               <div className="space-y-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label
+                  htmlFor="booking-seats"
+                  className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary"
+                >
                   Seats requested
-                </span>
-                <div className="flex gap-3">
-                  {[1, 2, 3].map((seat) => (
-                    <button
-                      key={seat}
-                      type="button"
-                      onClick={() => setSeats(seat)}
-                      aria-pressed={currentRequest.seats === seat}
-                      className={cn(
-                        "flex-1 rounded-2xl border px-4 py-4 text-sm font-semibold",
-                        currentRequest.seats === seat
-                          ? "border-brand-accent bg-brand-accent text-brand-surface-strong"
-                          : "border-brand-border bg-brand-surface-soft text-brand-text-primary",
-                      )}
-                    >
-                      {seat} seat{seat > 1 ? "s" : ""}
-                    </button>
-                  ))}
-                </div>
+                </label>
+                <input
+                  id="booking-seats"
+                  type="number"
+                  min={1}
+                  max={selectedRide?.seats_available ?? 8}
+                  value={currentRequest.seats ?? 1}
+                  onChange={(event) => setSeats(Number(event.target.value))}
+                  className="field-shell"
+                />
               </div>
             </div>
 
@@ -178,7 +224,7 @@ export default function Booking() {
                       INR {currentRequest.fareEstimate ?? "--"}
                     </p>
                     <p className="mt-2 text-sm text-brand-text-secondary">
-                      Shared pricing per rider for the selected route.
+                      Total fare for the selected seat count on the chosen ride.
                     </p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-surface-soft text-brand-accent">
@@ -187,37 +233,37 @@ export default function Booking() {
                 </div>
               </div>
 
+              {ridesError ? (
+                <div className="rounded-[1.5rem] border border-brand-warning/25 bg-brand-warning/10 px-5 py-4 text-sm text-brand-warning">
+                  {ridesError}
+                </div>
+              ) : null}
+
               {bookingError ? (
                 <div className="rounded-[1.5rem] border border-brand-warning/25 bg-brand-warning/10 px-5 py-4 text-sm text-brand-warning">
                   {bookingError}
                 </div>
               ) : null}
 
-              {stage === "active" || stage === "pending" ? (
+              {stage === "active" ? (
                 <div className="rounded-[1.8rem] border border-brand-accent bg-brand-accent/8 p-5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
-                    {stage === "active" ? "Match confirmed" : "Search live"}
+                    Ride booked
                   </p>
                   <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
-                    {stage === "active" ? "HopIn Share active" : "Looking for a live driver"}
+                    Your HopIn booking is confirmed
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
-                    {stage === "active"
-                      ? `Your route is live with a matched vehicle and co-riders. Ride ID: ${activeRide?.id}`
-                      : `Your request is stored and waiting for a live driver assignment. Ride ID: ${activeRide?.id}`}
+                    Ride ID: {activeRide?.id} / {activeRide?.pickup_address} to {activeRide?.dest_address}
                   </p>
                 </div>
               ) : null}
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                {stage === "active" || stage === "pending" ? (
+                {stage === "active" ? (
                   <>
-                    <Button
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => void cancelSearch()}
-                    >
-                      {stage === "active" ? "Cancel ride" : "Cancel request"}
+                    <Button size="lg" className="flex-1" onClick={() => void cancelSearch()}>
+                      Cancel ride
                     </Button>
                     <ButtonLink to="/dashboard" variant="outline" size="lg" className="flex-1">
                       Open dashboard
@@ -229,9 +275,9 @@ export default function Booking() {
                       size="lg"
                       className="flex-1"
                       onClick={() => void handleBooking()}
-                      disabled={!currentRequest.pickup || !currentRequest.destination || isSearching}
+                      disabled={!selectedRide || isSearching || loadingRides}
                     >
-                      {isSearching ? "Searching routes" : "Start matching"}
+                      {isSearching ? "Booking ride" : "Book selected ride"}
                     </Button>
                     <Button variant="outline" size="lg" className="flex-1" onClick={() => reset()}>
                       Reset form
@@ -244,15 +290,15 @@ export default function Booking() {
             <div className="grid gap-3 rounded-[1.8rem] border border-brand-border bg-brand-surface-soft p-5">
               <div className="flex items-center gap-3 text-sm text-brand-text-primary">
                 <Clock3 size={16} className="text-brand-accent" />
-                Typical weekday match in 10 to 15 minutes.
+                Book against currently published departures, not a placeholder request queue.
               </div>
               <div className="flex items-center gap-3 text-sm text-brand-text-primary">
                 <ShieldCheck size={16} className="text-brand-accent" />
-                Verified riders and clearer route context.
+                Driver identity and vehicle context travel with each live route.
               </div>
               <div className="flex items-center gap-3 text-sm text-brand-text-primary">
                 <MapPin size={16} className="text-brand-accent" />
-                Live zones tuned for dense repeat corridors.
+                Switch cities to compare real corridor inventory before booking.
               </div>
             </div>
           </aside>
@@ -264,10 +310,10 @@ export default function Booking() {
                   Route preview
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
-                  {selectedCity} booking surface
+                  {selectedCity} live ride map
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
-                  Review the route context without losing the form on smaller screens.
+                  Review the corridor context while comparing live rides in the selected city.
                 </p>
               </div>
               {routeSummaryCards.map((card) => (
@@ -285,10 +331,11 @@ export default function Booking() {
                 Route preview
               </p>
               <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
-                {selectedCity} booking surface
+                {selectedCity} live ride map
               </h2>
               <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
-                Use the map to review pickup and destination context while the route form stays stable on the left.
+                Use the map to compare the city context while your live ride list stays stable on
+                the left.
               </p>
             </div>
 

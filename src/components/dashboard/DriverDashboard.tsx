@@ -109,6 +109,11 @@ export const DriverDashboard = () => {
       return;
     }
 
+    if (dashboard.application.status !== "approved") {
+      setError("Your driver application must be approved before you can publish rides.");
+      return;
+    }
+
     const origin = cityLocations.find((location) => location.address === rideForm.origin);
     const destination = cityLocations.find((location) => location.address === rideForm.destination);
 
@@ -155,6 +160,8 @@ export const DriverDashboard = () => {
   const upcomingRides = dashboard.rides.filter((ride) => ride.status === "scheduled");
   const completedRides = dashboard.rides.filter((ride) => ride.status === "completed");
   const openSeats = upcomingRides.reduce((total, ride) => total + ride.seats_available, 0);
+  const applicationStatus = dashboard.application?.status ?? "missing";
+  const canPublishRide = applicationStatus === "approved";
 
   if (loading) {
     return (
@@ -186,7 +193,7 @@ export const DriverDashboard = () => {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Application" value={dashboard.application?.status ?? "missing"} icon={ShieldCheck} />
+        <StatCard label="Application" value={applicationStatus} icon={ShieldCheck} />
         <StatCard label="Vehicles" value={String(dashboard.vehicles.length)} icon={Car} color="text-brand-success" />
         <StatCard label="Scheduled rides" value={String(upcomingRides.length)} icon={Route} />
         <StatCard label="Open seats" value={String(openSeats)} icon={CheckCircle2} color="text-brand-accent" />
@@ -206,7 +213,26 @@ export const DriverDashboard = () => {
             <CalendarClock className="text-brand-text-secondary" size={22} />
           </div>
 
-          {profile?.city ? (
+          {!profile?.city ? (
+            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
+              <p className="text-sm text-brand-text-secondary">
+                Complete onboarding and add a primary city before publishing rides.
+              </p>
+            </div>
+          ) : !dashboard.application ? (
+            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
+              <p className="text-sm text-brand-text-secondary">
+                Submit a driver application before publishing rides from this account.
+              </p>
+            </div>
+          ) : !canPublishRide ? (
+            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
+              <p className="text-sm text-brand-text-secondary">
+                Driver application status: {applicationStatus}. Ride publishing stays locked until
+                the application is approved and your account is activated as a driver.
+              </p>
+            </div>
+          ) : (
             <form onSubmit={handleCreateRide} className="mt-8 grid gap-5">
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
@@ -296,12 +322,6 @@ export const DriverDashboard = () => {
                 {syncing ? "Publishing ride" : "Publish ride"}
               </Button>
             </form>
-          ) : (
-            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-              <p className="text-sm text-brand-text-secondary">
-                Complete onboarding and add a primary city before publishing rides.
-              </p>
-            </div>
           )}
 
           {error ? <p className="mt-5 text-sm text-brand-warning">{error}</p> : null}

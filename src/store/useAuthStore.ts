@@ -38,24 +38,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           data: { session },
         } = await supabase.auth.getSession()
 
-        set({ session, user: session?.user ?? null, loading: false })
+        set({ session, user: session?.user ?? null, loading: Boolean(session?.user) })
 
         if (session?.user) {
           await get().fetchProfile()
         }
 
+        set({ loading: false })
+
         if (!authSubscriptionRegistered) {
           supabase.auth.onAuthStateChange((_event, nextSession) => {
-            set({ session: nextSession, user: nextSession?.user ?? null })
-
             if (nextSession?.user) {
-              void get().fetchProfile().catch((error) => {
-                logDevError('auth.onAuthStateChange.fetchProfile', error)
-              })
+              set({ session: nextSession, user: nextSession.user, loading: true })
+
+              void get().fetchProfile()
+                .catch((error) => {
+                  logDevError('auth.onAuthStateChange.fetchProfile', error)
+                })
+                .finally(() => {
+                  set({ loading: false })
+                })
               return
             }
 
-            set({ profile: null })
+            set({ profile: null, session: null, user: null, loading: false })
           })
 
           authSubscriptionRegistered = true
@@ -129,13 +135,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const user = get().user
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+      const [profileResult, applicationResult] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+        supabase.from('driver_applications').select('status').eq('user_id', userId).maybeSingle(),
+      ])
 
-      if (error) {
-        throw error
+      if (profileResult.error) {
+        throw profileResult.error
       }
 
-      set({ profile: buildProfile((data as ProfileRow | null) ?? null, user) })
+      if (applicationResult.error) {
+        throw applicationResult.error
+      }
+
+      const profileRow = (profileResult.data as ProfileRow | null) ?? null
+      const applicationStatus = applicationResult.data?.status
+      const normalizedProfileRow =
+        profileRow && profileRow.role !== 'admin'
+          ? {
+              ...profileRow,
+              role:
+                applicationStatus === 'approved'
+                  ? 'driver'
+                  : applicationStatus
+                    ? 'rider'
+                    : profileRow.role,
+            }
+          : profileRow
+
+      set({ profile: buildProfile(normalizedProfileRow, user) })
     } catch (error) {
       logDevError('auth.fetchProfile', error)
       throw new Error(getErrorMessage(error, 'Could not load your profile right now.'))

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 const LiveBooking = () => {
   const [pickup, setPickup] = useState('Indiranagar, Bangalore');

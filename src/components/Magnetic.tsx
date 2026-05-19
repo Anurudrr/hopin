@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 const Magnetic = ({ children }: { children: React.ReactElement }) => {
   const ref = useRef<HTMLDivElement>(null);

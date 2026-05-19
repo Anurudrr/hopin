@@ -12,7 +12,7 @@ export function ProtectedRoute({
 }) {
   const { user, profile, loading } = useAuthStore();
 
-  if (loading) {
+  if (loading || (user && !profile)) {
     return (
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center justify-center">
         <div className="panel flex items-center gap-4 px-6 py-5">
@@ -27,7 +27,7 @@ export function ProtectedRoute({
     return <Navigate to="/login" replace />;
   }
 
-  if (requireOnboarding && profile && !profile.city) {
+  if (requireOnboarding && !profile?.onboarding_completed) {
     return <Navigate to="/onboarding" replace />;
   }
 

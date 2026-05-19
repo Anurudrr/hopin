@@ -6,9 +6,16 @@ export interface ProfileRow {
   id: string;
   full_name: string | null;
   phone: string | null;
+  email: string | null;
   city: string | null;
   role: UserRole | null;
+  gender: string | null;
+  home_address: string | null;
+  work_address: string | null;
   avatar_url: string | null;
+  is_phone_verified: boolean | null;
+  is_email_verified: boolean | null;
+  onboarding_completed: boolean | null;
   created_at: string;
   updated_at: string;
 }
@@ -36,15 +43,15 @@ export function buildProfile(row: ProfileRow | null, user: User | null): Profile
     full_name: fullName,
     avatar_url: row?.avatar_url ?? null,
     phone: row?.phone ?? null,
-    email: user?.email ?? null,
+    email: row?.email ?? user?.email ?? null,
     role: normalizeRole(row?.role),
     city: row?.city ?? null,
-    gender: null,
-    home_address: null,
-    work_address: null,
-    is_phone_verified: Boolean(row?.phone),
-    is_email_verified: Boolean(user?.email_confirmed_at),
-    onboarding_completed: Boolean(row?.city),
+    gender: row?.gender ?? null,
+    home_address: row?.home_address ?? null,
+    work_address: row?.work_address ?? null,
+    is_phone_verified: row?.is_phone_verified ?? false,
+    is_email_verified: row?.is_email_verified ?? Boolean(user?.email_confirmed_at),
+    onboarding_completed: row?.onboarding_completed ?? Boolean(row?.city),
     created_at: row?.created_at ?? now,
     updated_at: row?.updated_at ?? row?.created_at ?? now,
   }

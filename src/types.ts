@@ -93,7 +93,7 @@ export interface Booking {
   seats: number;
   status: BookingStatus;
   created_at: string;
-  departure_time: string;
+  departure_time: string | null;
   driver_name: string | null;
   vehicle_label: string | null;
 }
@@ -118,6 +118,15 @@ export interface DriverApplicationInput {
   plate: string;
   color: string;
   capacity: number;
+}
+
+export interface ContactMessageInput {
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  requestedRole?: string | null;
+  requestedCity?: string | null;
 }
 
 export interface RideInput {
