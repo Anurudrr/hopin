@@ -2,7 +2,13 @@ import * as React from "react";
 import { CalendarClock, Car, CheckCircle2, Route, ShieldCheck } from "lucide-react";
 
 import { bookingLocations } from "../../content/siteContent";
-import { createDriverRide, getDriverDashboardData } from "../../lib/api";
+import {
+  cancelDriverRide,
+  completeDriverRide,
+  createDriverRide,
+  getDriverDashboardData,
+  startDriverRide,
+} from "../../lib/api";
 import { getErrorMessage, logDevError } from "../../lib/errors";
 import { supabase } from "../../lib/supabase";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -21,6 +27,7 @@ export const DriverDashboard = () => {
   const [dashboard, setDashboard] = React.useState<DriverDashboardData>(emptyDashboard);
   const [loading, setLoading] = React.useState(true);
   const [syncing, setSyncing] = React.useState(false);
+  const [actingRideId, setActingRideId] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const cityLocations = React.useMemo(
     () => bookingLocations.filter((location) => location.city === profile?.city),
@@ -157,6 +164,28 @@ export const DriverDashboard = () => {
     }
   };
 
+  const handleRideAction = async (ride: Ride, action: "start" | "complete" | "cancel") => {
+    setActingRideId(ride.id);
+    setError(null);
+
+    try {
+      if (action === "start") {
+        await startDriverRide(ride.id);
+      } else if (action === "complete") {
+        await completeDriverRide(ride.id);
+      } else {
+        await cancelDriverRide(ride.id);
+      }
+
+      await loadDashboard();
+    } catch (actionError) {
+      logDevError(`DriverDashboard.${action}Ride`, actionError);
+      setError(getErrorMessage(actionError, "Could not update that ride."));
+    } finally {
+      setActingRideId(null);
+    }
+  };
+
   const upcomingRides = dashboard.rides.filter((ride) => ride.status === "scheduled");
   const completedRides = dashboard.rides.filter((ride) => ride.status === "completed");
   const openSeats = upcomingRides.reduce((total, ride) => total + ride.seats_available, 0);
@@ -166,8 +195,8 @@ export const DriverDashboard = () => {
   if (loading) {
     return (
       <div className="panel flex items-center gap-4 px-6 py-5">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-brand-border border-t-brand-accent" />
-        <p className="text-sm text-brand-text-secondary">Loading driver operations.</p>
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-black border-t-transparent" />
+        <p className="text-sm font-medium text-black/60">Loading driver operations.</p>
       </div>
     );
   }
@@ -176,58 +205,58 @@ export const DriverDashboard = () => {
     <div className="grid gap-6">
       <div className="panel-dark flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white">
             Driver operations
           </p>
-          <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-white">
+          <h2 className="mt-3 text-4xl font-black uppercase tracking-tighter text-white">
             Publish corridor rides from your {profile?.city || "assigned"} network.
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/65">
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-white">
             Your application, vehicle record, and future ride inventory now come directly from
             Supabase instead of the old Node dispatch layer.
           </p>
         </div>
-        <ButtonLink to="/driver-signup" variant="outline" className="border-white/15 text-white hover:bg-white/10">
+        <ButtonLink to="/driver-signup" variant="outline">
           Update driver details
         </ButtonLink>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Application" value={applicationStatus} icon={ShieldCheck} />
-        <StatCard label="Vehicles" value={String(dashboard.vehicles.length)} icon={Car} color="text-brand-success" />
+        <StatCard label="Vehicles" value={String(dashboard.vehicles.length)} icon={Car} color="bg-white text-black" />
         <StatCard label="Scheduled rides" value={String(upcomingRides.length)} icon={Route} />
-        <StatCard label="Open seats" value={String(openSeats)} icon={CheckCircle2} color="text-brand-accent" />
+        <StatCard label="Open seats" value={String(openSeats)} icon={CheckCircle2} color="bg-white text-black" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
         <div className="panel p-8">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black">
                 Publish a ride
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 Schedule a shared route
               </h3>
             </div>
-            <CalendarClock className="text-brand-text-secondary" size={22} />
+            <CalendarClock className="text-black/60" size={22} />
           </div>
 
           {!profile?.city ? (
-            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-              <p className="text-sm text-brand-text-secondary">
+            <div className="mt-8 rounded-none border-2 border-black bg-gray-100 p-5">
+              <p className="text-sm text-black/60">
                 Complete onboarding and add a primary city before publishing rides.
               </p>
             </div>
           ) : !dashboard.application ? (
-            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-              <p className="text-sm text-brand-text-secondary">
+            <div className="mt-8 rounded-none border-2 border-black bg-gray-100 p-5">
+              <p className="text-sm text-black/60">
                 Submit a driver application before publishing rides from this account.
               </p>
             </div>
           ) : !canPublishRide ? (
-            <div className="mt-8 rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-              <p className="text-sm text-brand-text-secondary">
+            <div className="mt-8 rounded-none border-2 border-black bg-gray-100 p-5">
+              <p className="text-sm text-black/60">
                 Driver application status: {applicationStatus}. Ride publishing stays locked until
                 the application is approved and your account is activated as a driver.
               </p>
@@ -236,7 +265,7 @@ export const DriverDashboard = () => {
             <form onSubmit={handleCreateRide} className="mt-8 grid gap-5">
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="ride-origin" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="ride-origin" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Origin
                   </label>
                   <select
@@ -255,7 +284,7 @@ export const DriverDashboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="ride-destination" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="ride-destination" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Destination
                   </label>
                   <select
@@ -276,7 +305,7 @@ export const DriverDashboard = () => {
 
               <div className="grid gap-5 md:grid-cols-3">
                 <div className="space-y-2">
-                  <label htmlFor="ride-departure" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="ride-departure" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Departure time
                   </label>
                   <input
@@ -289,7 +318,7 @@ export const DriverDashboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="ride-seats" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="ride-seats" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Seats
                   </label>
                   <input
@@ -304,7 +333,7 @@ export const DriverDashboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="ride-fare" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="ride-fare" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Fare per seat
                   </label>
                   <input
@@ -324,12 +353,12 @@ export const DriverDashboard = () => {
             </form>
           )}
 
-          {error ? <p className="mt-5 text-sm text-brand-warning">{error}</p> : null}
+          {error ? <p className="mt-5 text-sm font-medium text-black">{error}</p> : null}
         </div>
 
         <div className="grid gap-6">
           <div className="panel p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black">
               Vehicles
             </p>
             <div className="mt-5 grid gap-3">
@@ -337,19 +366,19 @@ export const DriverDashboard = () => {
                 dashboard.vehicles.map((vehicle) => (
                   <div
                     key={vehicle.id}
-                    className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5"
+                    className="rounded-none border-2 border-black bg-gray-100 p-5"
                   >
-                    <p className="text-sm font-semibold text-brand-text-primary">
+                    <p className="text-sm font-semibold text-black">
                       {vehicle.color} {vehicle.make} {vehicle.model}
                     </p>
-                    <p className="mt-1 text-sm text-brand-text-secondary">
+                    <p className="mt-1 text-sm text-black/60">
                       {vehicle.license_plate} / {vehicle.year} / {vehicle.capacity} seats
                     </p>
                   </div>
                 ))
               ) : (
-                <div className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-                  <p className="text-sm text-brand-text-secondary">
+                <div className="rounded-none border-2 border-black bg-gray-100 p-5">
+                  <p className="text-sm text-black/60">
                     No vehicle records are attached yet.
                   </p>
                 </div>
@@ -358,7 +387,7 @@ export const DriverDashboard = () => {
           </div>
 
           <div className="panel p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black">
               Ride inventory
             </p>
             <div className="mt-5 grid gap-3">
@@ -366,26 +395,80 @@ export const DriverDashboard = () => {
                 dashboard.rides.map((ride: Ride) => (
                   <div
                     key={ride.id}
-                    className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5"
+                    className="rounded-none border-2 border-black bg-gray-100 p-5"
                   >
-                    <p className="text-sm font-semibold text-brand-text-primary">
+                    <p className="text-sm font-semibold text-black">
                       {ride.origin_name} to {ride.destination_name}
                     </p>
-                    <p className="mt-1 text-sm text-brand-text-secondary">
+                    <p className="mt-1 text-sm text-black/60">
                       {new Date(ride.departure_time).toLocaleString()} / {ride.status} /{" "}
                       {ride.seats_available} seats open
                     </p>
+                    {ride.started_at ? (
+                      <p className="mt-1 text-sm text-black/60">
+                        Started: {new Date(ride.started_at).toLocaleString()}
+                      </p>
+                    ) : null}
+                    {ride.completed_at ? (
+                      <p className="mt-1 text-sm text-black/60">
+                        Completed: {new Date(ride.completed_at).toLocaleString()}
+                      </p>
+                    ) : null}
+                    {ride.cancelled_at ? (
+                      <p className="mt-1 text-sm text-black/60">
+                        Cancelled: {new Date(ride.cancelled_at).toLocaleString()}
+                        {ride.cancel_reason ? ` / ${ride.cancel_reason}` : ""}
+                      </p>
+                    ) : null}
+                    {ride.status === "scheduled" ? (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <Button
+                          size="sm"
+                          disabled={actingRideId === ride.id}
+                          onClick={() => void handleRideAction(ride, "start")}
+                        >
+                          {actingRideId === ride.id ? "Updating ride" : "Start ride"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={actingRideId === ride.id}
+                          onClick={() => void handleRideAction(ride, "cancel")}
+                        >
+                          Cancel ride
+                        </Button>
+                      </div>
+                    ) : null}
+                    {ride.status === "active" ? (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <Button
+                          size="sm"
+                          disabled={actingRideId === ride.id}
+                          onClick={() => void handleRideAction(ride, "complete")}
+                        >
+                          {actingRideId === ride.id ? "Updating ride" : "Complete ride"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={actingRideId === ride.id}
+                          onClick={() => void handleRideAction(ride, "cancel")}
+                        >
+                          Cancel ride
+                        </Button>
+                      </div>
+                    ) : null}
                   </div>
                 ))
               ) : (
-                <div className="rounded-[1.6rem] border border-brand-border bg-brand-surface-soft p-5">
-                  <p className="text-sm text-brand-text-secondary">
+                <div className="rounded-none border-2 border-black bg-gray-100 p-5">
+                  <p className="text-sm text-black/60">
                     No rides have been published from this account yet.
                   </p>
                 </div>
               )}
               {completedRides.length ? (
-                <p className="text-sm text-brand-text-secondary">
+                <p className="text-sm text-black/60">
                   Completed rides on file: {completedRides.length}
                 </p>
               ) : null}
@@ -396,3 +479,4 @@ export const DriverDashboard = () => {
     </div>
   );
 };
+

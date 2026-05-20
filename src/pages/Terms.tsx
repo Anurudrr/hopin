@@ -41,13 +41,13 @@ export default function Terms() {
         <div className="section-frame max-w-4xl space-y-4">
           {sections.map((section, index) => (
             <Reveal key={section.title} delay={index * 0.04} className="panel p-8">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                 0{index + 1}
               </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h2 className="mt-4 text-3xl font-black uppercase tracking-tight text-black">
                 {section.title}
               </h2>
-              <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-4 text-sm leading-7 text-black/60">
                 {section.body}
               </p>
             </Reveal>
@@ -57,3 +57,4 @@ export default function Terms() {
     </div>
   );
 }
+

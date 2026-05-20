@@ -55,17 +55,17 @@ export default function Cities() {
                 />
                 <div className="space-y-5 p-7">
                   <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-black">
                       {city.name}
                     </h2>
                     <span className="route-chip">{city.status}</span>
                   </div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+                  <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black">
                     {city.rides}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {city.coverage.map((zone) => (
-                      <span key={zone} className="route-chip bg-brand-surface-soft">
+                      <span key={zone} className="route-chip">
                         {zone}
                       </span>
                     ))}
@@ -76,7 +76,7 @@ export default function Cities() {
                         to="/book"
                         variant="ghost"
                         size="sm"
-                        className="gap-2 px-0 py-0 text-brand-text-primary hover:bg-transparent hover:text-brand-accent"
+                        className="gap-2 px-0 py-0 text-black hover:bg-transparent hover:text-black"
                       >
                         Open booking surface
                         <ArrowRight size={14} />
@@ -86,7 +86,7 @@ export default function Cities() {
                         to={`/contact?topic=expansion&city=${encodeURIComponent(city.name)}`}
                         variant="ghost"
                         size="sm"
-                        className="gap-2 px-0 py-0 text-brand-text-primary hover:bg-transparent hover:text-brand-accent"
+                        className="gap-2 px-0 py-0 text-black hover:bg-transparent hover:text-black"
                       >
                         Request launch updates
                         <ArrowRight size={14} />
@@ -102,10 +102,9 @@ export default function Cities() {
 
       <section className="section-shell">
         <div className="section-frame">
-          <div className="panel-dark p-6 md:p-8 lg:p-10">
+          <div className="panel p-6 md:p-8 lg:p-10">
             <SectionHeading
               eyebrow="Launch protocol"
-              inverse
               title={
                 <>
                   A new city is a routing problem before it is a marketing problem.
@@ -116,14 +115,14 @@ export default function Cities() {
 
             <div className="mt-10 grid gap-4 lg:grid-cols-3">
               {rolloutSteps.map((step, index) => (
-                <Reveal key={step.title} delay={index * 0.05} className="rounded-[1.8rem] border border-white/10 bg-white/6 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/8 text-brand-accent">
+                <Reveal key={step.title} delay={index * 0.05} className="rounded-none border-2 border-black bg-gray-100 p-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                     <step.icon size={22} />
                   </div>
-                  <h3 className="mt-5 text-2xl font-semibold tracking-[-0.04em] text-white">
+                  <h3 className="mt-5 text-2xl font-black uppercase tracking-tight text-black">
                     {step.title}
                   </h3>
-                  <p className="mt-4 text-sm leading-7 text-white/62">
+                  <p className="mt-4 text-sm leading-7 text-black/60">
                     {step.body}
                   </p>
                 </Reveal>
@@ -137,13 +136,13 @@ export default function Cities() {
         <div className="section-frame">
           <Reveal className="panel flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                 Expansion requests
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 Want HopIn in your corridor next?
               </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-black/60">
                 Tell us which neighborhoods, office clusters, or campus routes we should evaluate for the next dense launch zone.
               </p>
             </div>
@@ -162,3 +161,4 @@ export default function Cities() {
     </div>
   );
 }
+

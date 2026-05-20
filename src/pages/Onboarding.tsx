@@ -90,24 +90,24 @@ export default function Onboarding() {
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="panel-dark flex flex-col justify-between gap-8 p-8 md:p-10">
             <div className="space-y-5">
-              <div className="eyebrow text-white/55">Onboarding</div>
-              <h1 className="text-5xl font-semibold tracking-[-0.06em] text-white">
+              <div className="eyebrow text-white">Onboarding</div>
+              <h1 className="text-5xl font-black uppercase leading-[0.88] tracking-tighter text-white">
                 Set the profile details riders and drivers will trust.
               </h1>
-              <p className="text-base leading-8 text-white/62">
+              <p className="text-base leading-8 text-white">
                 HopIn only needs a few core details to keep route matching readable: who you are,
                 where you ride, and how other riders can identify you.
               </p>
             </div>
 
-            <div className="grid gap-3 text-sm text-white/65">
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+            <div className="grid gap-3 text-sm text-white">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 01 / Public name
               </div>
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 02 / Primary city
               </div>
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 03 / Contact signal
               </div>
             </div>
@@ -120,22 +120,22 @@ export default function Onboarding() {
             className="panel space-y-8 p-8 md:p-10"
           >
             <div>
-              <h2 className="text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+              <h2 className="text-4xl font-black uppercase tracking-tight text-black">
                 Complete your account
               </h2>
-              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 text-sm leading-7 text-black/60">
                 These values are saved to your Supabase profile and used across booking, rider
                 dashboards, and driver applications.
               </p>
             </div>
 
-            <div className="flex h-24 w-24 items-center justify-center rounded-full border border-brand-border bg-brand-surface-soft text-brand-text-secondary">
+            <div className="flex h-24 w-24 items-center justify-center rounded-none border-2 border-black bg-white text-black">
               <UserCircle2 size={38} />
             </div>
 
             <div className="grid gap-5">
               <div className="space-y-2">
-                <label htmlFor="full-name" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="full-name" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Full name
                 </label>
                 <input
@@ -152,11 +152,11 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="city" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="city" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Primary city *
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
+                  <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={16} />
                   <select
                     id="city"
                     value={formData.city}
@@ -177,11 +177,11 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="phone" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="phone" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Phone
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
+                  <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={16} />
                   <input
                     id="phone"
                     type="tel"
@@ -197,7 +197,7 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="gender" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="gender" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Gender (Optional)
                 </label>
                 <select
@@ -218,7 +218,7 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="home-address" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="home-address" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Home Address (Optional)
                 </label>
                 <input
@@ -235,7 +235,7 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="work-address" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="work-address" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Work Address (Optional)
                 </label>
                 <input
@@ -253,7 +253,7 @@ export default function Onboarding() {
             </div>
 
             {error ? (
-              <div className="rounded-[1.5rem] border border-brand-warning/25 bg-brand-warning/10 px-5 py-4 text-sm text-brand-warning">
+              <div className="rounded-none border-2 border-black bg-gray-100 px-5 py-4 text-sm text-black">
                 {error}
               </div>
             ) : null}
@@ -267,3 +267,4 @@ export default function Onboarding() {
     </div>
   );
 }
+

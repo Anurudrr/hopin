@@ -41,18 +41,18 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
   }, [pathname, hash]);
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 px-4 py-4 md:px-6">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between rounded-full border border-white/10 bg-brand-surface-strong/88 px-5 py-3 text-brand-text-inverse shadow-[var(--shadow-float)] backdrop-blur-xl md:px-7">
+    <nav className="fixed inset-x-0 top-0 z-50 border-b-2 border-black bg-white">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 md:px-6">
         <div className="flex items-center gap-8">
           <Link to="/" className="group flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 text-[11px] font-bold uppercase tracking-[0.3em] text-brand-accent">
+            <span className="inline-flex h-10 w-10 items-center justify-center border-2 border-black bg-black text-[11px] font-black uppercase tracking-[0.3em] text-white">
               HI
             </span>
             <div className="hidden sm:block">
-              <p className="text-lg font-semibold tracking-[-0.04em] text-white">
+              <p className="text-lg font-black uppercase tracking-[0.18em] text-black">
                 HopIn
               </p>
-              <p className="text-[10px] uppercase tracking-[0.24em] text-white/60">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-black/55">
                 shared city mobility
               </p>
             </div>
@@ -60,19 +60,19 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
 
           {compact ? (
             <div className="hidden lg:flex">
-              <span className="route-chip border-white/12 bg-white/6 text-white/78">
+              <span className="route-chip">
                 {surfaceLabel}
               </span>
             </div>
           ) : null}
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-1 lg:flex">
             {primaryItems.map((item) => (
               item.to.startsWith("/#") ? (
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/72 hover:bg-white/6 hover:text-white"
+                  className="px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-black hover:underline hover:decoration-2 hover:underline-offset-4"
                 >
                   {item.label}
                 </Link>
@@ -82,8 +82,8 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                   to={item.to}
                   className={({ isActive }) =>
                     cn(
-                      "rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] hover:bg-white/6 hover:text-white",
-                      isActive ? "bg-white/8 text-white" : "text-white/72",
+                      "px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-black hover:underline hover:decoration-2 hover:underline-offset-4",
+                      isActive && "underline decoration-2 underline-offset-4",
                     )
                   }
                 >
@@ -100,20 +100,20 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
               <div className="flex items-center gap-4">
                 <Link
                   to="/dashboard"
-                  className="rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/72 hover:bg-white/6 hover:text-white"
+                  className="px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-black hover:underline hover:decoration-2 hover:underline-offset-4"
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/profile"
                   aria-label="Open profile"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/6"
+                  className="flex h-10 w-10 items-center justify-center border-2 border-black bg-white text-black shadow-soft hover:bg-black hover:text-white"
                 >
-                  <User size={17} className="text-white/72" />
+                  <User size={17} />
                 </Link>
                 <button
                   onClick={() => void signOut()}
-                  className="rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/72 hover:bg-white/6 hover:text-white"
+                  className="px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-black hover:underline hover:decoration-2 hover:underline-offset-4"
                 >
                   Sign Out
                 </button>
@@ -122,7 +122,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
               <>
                 <Link
                   to="/login"
-                  className="rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/72 hover:bg-white/6 hover:text-white"
+                  className="px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-black hover:underline hover:decoration-2 hover:underline-offset-4"
                 >
                   Log In
                 </Link>
@@ -135,7 +135,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
           </div>
 
           <button
-            className="rounded-full border border-white/10 bg-white/6 p-2.5 text-white lg:hidden"
+            className="border-2 border-black bg-white p-2.5 text-black lg:hidden"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={isOpen}
@@ -154,7 +154,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
             : { height: 0, opacity: 0, y: -16 }
         }
         id="mobile-navigation"
-        className="mx-auto mt-3 max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-brand-surface-strong text-brand-text-inverse shadow-[var(--shadow-float)] lg:hidden"
+        className="mx-auto max-w-7xl overflow-hidden border-x-2 border-b-2 border-black bg-white lg:hidden"
       >
         <div className="flex flex-col gap-4 p-6">
           {primaryItems.map((item) => (
@@ -163,7 +163,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                 key={item.label}
                 to={item.to}
                 onClick={() => setIsOpen(false)}
-                className="rounded-[1.5rem] border border-white/10 bg-white/6 px-5 py-4 text-base font-semibold tracking-[-0.03em] text-white"
+                className="border-2 border-black px-5 py-4 text-base font-black uppercase tracking-[0.16em] text-black shadow-soft"
               >
                 {item.label}
               </Link>
@@ -174,10 +174,10 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
                     cn(
-                      "rounded-[1.5rem] border px-5 py-4 text-base font-semibold tracking-[-0.03em]",
+                      "border-2 border-black px-5 py-4 text-base font-black uppercase tracking-[0.16em] shadow-soft",
                       isActive
-                      ? "border-brand-accent bg-brand-accent text-brand-surface-strong"
-                      : "border-white/10 bg-white/6 text-white",
+                      ? "bg-black text-white"
+                      : "bg-white text-black",
                     )
                 }
               >
@@ -186,7 +186,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
             )
           ))}
 
-          <div className="my-2 h-px bg-white/10" />
+          <div className="my-2 h-px bg-black" />
 
           <div className="flex flex-col gap-4">
             {user ? (
@@ -195,7 +195,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                   to="/dashboard"
                   onClick={() => setIsOpen(false)}
                   variant="outline"
-                  className="w-full border-white/15 text-white hover:bg-white/10"
+                  className="w-full"
                 >
                   Dashboard
                 </ButtonLink>
@@ -203,7 +203,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                   to="/profile"
                   onClick={() => setIsOpen(false)}
                   variant="outline"
-                  className="w-full border-white/15 text-white hover:bg-white/10"
+                  className="w-full"
                 >
                   Profile
                 </ButtonLink>
@@ -213,7 +213,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                     void signOut();
                     setIsOpen(false);
                   }}
-                  className="w-full text-white/72 hover:bg-white/8 hover:text-white"
+                  className="w-full"
                 >
                   Sign Out
                 </Button>
@@ -224,7 +224,7 @@ export const Navbar = ({ compact = false }: NavbarProps) => {
                   to="/login"
                   onClick={() => setIsOpen(false)}
                   variant="outline"
-                  className="w-full border-white/15 text-white hover:bg-white/10"
+                  className="w-full"
                 >
                   Log In
                 </ButtonLink>

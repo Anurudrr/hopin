@@ -35,7 +35,7 @@ export function Avatar({
   return (
     <div
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-full border border-brand-border bg-brand-surface-soft text-brand-text-primary",
+        "flex items-center justify-center overflow-hidden rounded-full border-2 border-black bg-white text-black",
         className,
       )}
     >
@@ -49,7 +49,7 @@ export function Avatar({
           className={cn("h-full w-full object-cover", imageClassName)}
         />
       ) : (
-        <span className="text-sm font-semibold uppercase tracking-[0.18em]">
+        <span className="text-sm font-black uppercase tracking-[0.18em]">
           {initials}
         </span>
       )}

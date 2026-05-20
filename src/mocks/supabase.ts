@@ -55,6 +55,10 @@ export const mockRide: Ride = {
   fare_per_seat: 180,
   status: "scheduled",
   created_at: "2026-05-20T10:00:00.000Z",
+  started_at: null,
+  completed_at: null,
+  cancelled_at: null,
+  cancel_reason: null,
   driver: {
     id: "driver-123",
     full_name: "Rahul Driver",
@@ -86,6 +90,10 @@ export const mockBooking: Booking = {
   status: "confirmed",
   created_at: "2026-05-20T10:00:00.000Z",
   departure_time: mockRide.departure_time,
+  started_at: null,
+  completed_at: null,
+  cancelled_at: null,
+  cancel_reason: null,
   driver_name: "Rahul Driver",
   vehicle_label: "White Hyundai Creta",
 };

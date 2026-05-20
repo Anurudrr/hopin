@@ -19,8 +19,8 @@ export default function Profile() {
     return (
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center justify-center">
         <div className="panel flex items-center gap-4 px-6 py-5">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-brand-border border-t-brand-accent" />
-          <p className="text-sm text-brand-text-secondary">Fetching your profile.</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-black border-t-transparent" />
+          <p className="text-sm font-medium text-black/60">Fetching your profile.</p>
         </div>
       </div>
     );
@@ -30,10 +30,10 @@ export default function Profile() {
     return (
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center justify-center">
         <div className="panel max-w-xl p-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-surface-soft text-brand-text-secondary">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none border-2 border-black bg-white text-black">
             <User size={28} />
           </div>
-          <h1 className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+          <h1 className="mt-6 text-4xl font-black uppercase tracking-tight text-black">
             Sign in to view your profile.
           </h1>
           <ButtonLink to="/login" size="lg" className="mt-8">
@@ -61,13 +61,13 @@ export default function Profile() {
 
           <div className="flex-1 space-y-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black">
                 Profile
               </p>
-              <h1 className="mt-2 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+              <h1 className="mt-2 text-4xl font-black uppercase tracking-tight text-black">
                 {profile.full_name || "HopIn user"}
               </h1>
-              <p className="mt-2 text-sm text-brand-text-secondary">{profile.email}</p>
+              <p className="mt-2 text-sm text-black/60">{profile.email}</p>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -97,19 +97,19 @@ export default function Profile() {
                 className="panel flex items-center justify-between p-6 text-left"
               >
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-surface-soft text-brand-accent">
+                <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                   <section.icon size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                  <h2 className="text-xl font-semibold tracking-[-0.04em] text-black">
                     {section.title}
                   </h2>
-                  <p className="mt-2 text-sm leading-7 text-brand-text-secondary">
+                  <p className="mt-2 text-sm leading-7 text-black/60">
                     {section.description}
                   </p>
                 </div>
                 </div>
-                <span className="text-sm text-brand-text-secondary">
+                <span className="text-sm text-black/60">
                   {section.title === "Email verification"
                     ? profile.is_email_verified
                       ? "Verified"
@@ -129,7 +129,7 @@ export default function Profile() {
           </div>
 
         <div className="flex justify-center">
-          <Button variant="outline" className="gap-2 border-brand-warning/25 text-brand-warning hover:bg-brand-warning/10" onClick={() => void signOut()}>
+          <Button variant="outline" className="gap-2" onClick={() => void signOut()}>
             <LogOut size={16} />
             Sign Out
           </Button>
@@ -138,3 +138,4 @@ export default function Profile() {
     </div>
   );
 }
+

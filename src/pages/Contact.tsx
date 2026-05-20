@@ -136,10 +136,10 @@ export default function Contact() {
           <Reveal className="panel p-8 md:p-10">
             <div className="space-y-6">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+                <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                   Send a message
                 </p>
-                <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+                <h2 className="mt-3 text-4xl font-black uppercase tracking-tighter text-black">
                   Tell us what you need.
                 </h2>
               </div>
@@ -147,7 +147,7 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
-                    <label htmlFor="contact-name" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                    <label htmlFor="contact-name" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                       Name
                     </label>
                     <input
@@ -164,7 +164,7 @@ export default function Contact() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="contact-email" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                    <label htmlFor="contact-email" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                       Email
                     </label>
                     <input
@@ -183,7 +183,7 @@ export default function Contact() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="contact-topic" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="contact-topic" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Topic
                   </label>
                   <select
@@ -205,7 +205,7 @@ export default function Contact() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="contact-message" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                  <label htmlFor="contact-message" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                     Message
                   </label>
                   <textarea
@@ -221,9 +221,9 @@ export default function Contact() {
                   />
                 </div>
 
-                {error ? <p className="text-sm text-brand-warning">{error}</p> : null}
+                {error ? <p className="text-sm text-black">{error}</p> : null}
                 {submitted ? (
-                  <p className="text-sm text-brand-success" aria-live="polite">
+                  <p className="text-sm text-black" aria-live="polite">
                     Your message was submitted to HopIn support.
                   </p>
                 ) : null}
@@ -234,7 +234,7 @@ export default function Contact() {
                   </Button>
                   <a
                     href="mailto:help@hopin.co"
-                    className="inline-flex items-center justify-center rounded-full border border-brand-border px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-text-primary hover:bg-brand-surface-soft"
+                    className="inline-flex items-center justify-center rounded-none border-2 border-black bg-white px-8 py-4 text-[11px] font-black uppercase tracking-[0.22em] text-black shadow-soft hover:bg-black hover:text-white"
                   >
                     Email directly
                   </a>
@@ -245,43 +245,43 @@ export default function Contact() {
 
           <div className="grid gap-6">
             <Reveal className="panel p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+              <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-white text-black">
                 <Mail size={22} />
               </div>
-              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-6 text-2xl font-black uppercase tracking-tight text-black">
                 Email support
               </h3>
-              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 text-sm leading-7 text-black/60">
                 For direct outreach outside the in-app queue, including product issues and partnerships.
               </p>
-              <a href="mailto:help@hopin.co" className="mt-4 inline-block text-sm font-semibold text-brand-text-primary hover:text-brand-accent">
+              <a href="mailto:help@hopin.co" className="mt-4 inline-block text-sm font-semibold text-black hover:text-black">
                 help@hopin.co
               </a>
             </Reveal>
 
             <Reveal className="panel p-8" delay={0.05}>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+              <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-white text-black">
                 <Phone size={22} />
               </div>
-              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-6 text-2xl font-black uppercase tracking-tight text-black">
                 Phone support
               </h3>
-              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 text-sm leading-7 text-black/60">
                 Available for urgent rider and driver support escalations.
               </p>
-              <a href="tel:+918045678900" className="mt-4 inline-block text-sm font-semibold text-brand-text-primary hover:text-brand-accent">
+              <a href="tel:+918045678900" className="mt-4 inline-block text-sm font-semibold text-black hover:text-black">
                 +91 80 4567 8900
               </a>
             </Reveal>
 
-            <Reveal className="panel-dark p-8" delay={0.1}>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/8 text-brand-accent">
+            <Reveal className="panel p-8" delay={0.1}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                 <MapPin size={22} />
               </div>
-              <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-white">
+              <h3 className="mt-6 text-2xl font-black uppercase tracking-tight text-black">
                 Bangalore office
               </h3>
-              <p className="mt-3 text-sm leading-7 text-white/64">
+              <p className="mt-3 text-sm leading-7 text-black/60">
                 HopIn Technologies Private Limited
                 <br />
                 12, 100 Feet Road, HAL 2nd Stage
@@ -295,3 +295,4 @@ export default function Contact() {
     </div>
   );
 }
+

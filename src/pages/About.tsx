@@ -65,10 +65,10 @@ export default function About() {
           <div className="grid gap-4 md:grid-cols-4">
             {networkMetrics.map((metric, index) => (
               <Reveal key={metric.label} delay={index * 0.05} className="panel p-6">
-                <p className="text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <p className="text-3xl font-black uppercase tracking-tight text-black">
                   {metric.value}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-brand-text-secondary">
+                <p className="mt-2 text-sm leading-6 text-black/60">
                   {metric.label}
                 </p>
               </Reveal>
@@ -93,10 +93,10 @@ export default function About() {
           <div className="grid gap-6 lg:grid-cols-2">
             {manifestoPillars.map((pillar, index) => (
               <Reveal key={pillar.title} delay={index * 0.05} className="panel p-8">
-                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <h3 className="text-2xl font-black uppercase tracking-tight text-black">
                   {pillar.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+                <p className="mt-4 text-sm leading-7 text-black/60">
                   {pillar.body}
                 </p>
               </Reveal>
@@ -107,10 +107,9 @@ export default function About() {
 
       <section className="section-shell">
         <div className="section-frame">
-          <div className="panel-dark p-6 md:p-8 lg:p-10">
+          <div className="panel p-6 md:p-8 lg:p-10">
             <SectionHeading
               eyebrow="From idea to network"
-              inverse
               title={
                 <>
                   Building HopIn is a sequence, not a launch stunt.
@@ -121,14 +120,14 @@ export default function About() {
 
             <div className="mt-10 grid gap-4 lg:grid-cols-3">
               {timeline.map((item, index) => (
-                <Reveal key={item.year} delay={index * 0.05} className="rounded-[1.8rem] border border-white/10 bg-white/6 p-6">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+                <Reveal key={item.year} delay={index * 0.05} className="rounded-none border-2 border-black bg-gray-100 p-6">
+                  <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black/60">
                     {item.year}
                   </p>
-                  <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-white">
+                  <h3 className="mt-4 text-2xl font-black uppercase tracking-tight text-black">
                     {item.title}
                   </h3>
-                  <p className="mt-4 text-sm leading-7 text-white/62">
+                  <p className="mt-4 text-sm leading-7 text-black/60">
                     {item.body}
                   </p>
                 </Reveal>
@@ -153,13 +152,13 @@ export default function About() {
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {values.map((value, index) => (
               <Reveal key={value.title} delay={index * 0.04} className="panel p-7">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+                <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                   <value.icon size={22} />
                 </div>
-                <h3 className="mt-6 text-xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <h3 className="mt-6 text-xl font-black uppercase tracking-tight text-black">
                   {value.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+                <p className="mt-4 text-sm leading-7 text-black/60">
                   {value.body}
                 </p>
               </Reveal>
@@ -168,10 +167,10 @@ export default function About() {
 
           <Reveal className="panel flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                 Continue exploring
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 Review the safety model or talk to the team.
               </h3>
             </div>
@@ -190,3 +189,4 @@ export default function About() {
     </div>
   );
 }
+

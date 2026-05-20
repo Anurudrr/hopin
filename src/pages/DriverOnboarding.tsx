@@ -89,10 +89,10 @@ export default function DriverOnboarding() {
       <div className="section-shell flex min-h-[calc(100vh-5rem)] items-center">
         <div className="section-frame max-w-3xl">
           <div className="panel p-8 text-center md:p-10">
-            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+            <h1 className="text-4xl font-black uppercase tracking-tight text-black">
               Sign in before applying as a driver.
             </h1>
-            <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+            <p className="mt-4 text-sm leading-7 text-black/60">
               Driver applications are tied directly to your Supabase account profile.
             </p>
             <ButtonLink to="/login?mode=signup" size="lg" className="mt-8">
@@ -113,18 +113,18 @@ export default function DriverOnboarding() {
             animate={{ opacity: 1, scale: 1 }}
             className="panel-dark p-8 text-center md:p-10"
           >
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/8 text-brand-accent">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-none border-2 border-black bg-white text-black">
               <ShieldCheck size={28} />
             </div>
-            <h1 className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-white">
+            <h1 className="mt-6 text-4xl font-black uppercase tracking-tight text-white">
               Application submitted
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-white/62">
+            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-white">
               Your license details, secure document path, and vehicle metadata are now stored for
               review. You can publish rides only after the application is approved and your account
               is activated as a driver.
             </p>
-            <Button size="lg" className="mt-8" onClick={() => navigate("/dashboard")}>
+            <Button variant="outline" size="lg" className="mt-8" onClick={() => navigate("/dashboard")}>
               Return to dashboard
             </Button>
           </motion.div>
@@ -139,24 +139,24 @@ export default function DriverOnboarding() {
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="panel-dark flex flex-col justify-between gap-8 p-8 md:p-10">
             <div className="space-y-5">
-              <div className="eyebrow text-white/55">Driver application</div>
-              <h1 className="text-5xl font-semibold tracking-[-0.06em] text-white">
+              <div className="eyebrow text-white">Driver application</div>
+              <h1 className="text-5xl font-black uppercase leading-[0.88] tracking-tighter text-white">
                 Add the license and vehicle details needed to schedule rides.
               </h1>
-              <p className="text-base leading-8 text-white/62">
+              <p className="text-base leading-8 text-white">
                 This flow writes directly to `driver_applications` and `vehicles`, then sends your
                 account into the driver approval queue.
               </p>
             </div>
 
-            <div className="grid gap-3 text-sm text-white/65">
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+            <div className="grid gap-3 text-sm text-white">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 01 / License metadata
               </div>
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 02 / Review document link
               </div>
-              <div className="rounded-[1.6rem] border border-white/12 bg-white/8 px-5 py-4">
+              <div className="rounded-none border-2 border-black bg-white px-5 py-4 text-black">
                 03 / Vehicle record
               </div>
             </div>
@@ -169,21 +169,21 @@ export default function DriverOnboarding() {
             className="panel space-y-8 p-8 md:p-10"
           >
             <div>
-              <h2 className="text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+              <h2 className="text-4xl font-black uppercase tracking-tight text-black">
                 Driver details
               </h2>
-              <p className="mt-3 text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 text-sm leading-7 text-black/60">
                 Use the exact details you want attached to your public driver and vehicle records.
               </p>
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
               <div className="space-y-2">
-                <label htmlFor="license-number" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="license-number" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   License number
                 </label>
                 <div className="relative">
-                  <FileText className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
+                  <FileText className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={16} />
                   <input
                     id="license-number"
                     type="text"
@@ -199,11 +199,11 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="license-expiry" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="license-expiry" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   License expiry
                 </label>
                 <div className="relative">
-                  <CalendarDays className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
+                  <CalendarDays className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={16} />
                   <input
                     id="license-expiry"
                     type="date"
@@ -218,7 +218,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="document-file" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="document-file" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Document Upload (PDF or Image)
                 </label>
                 <input
@@ -255,7 +255,7 @@ export default function DriverOnboarding() {
                   }}
                   className="field-shell"
                 />
-                <p className="text-xs text-brand-text-secondary">
+                <p className="text-xs text-black/60">
                   Upload a PDF or image up to 5 MB.
                 </p>
               </div>
@@ -263,11 +263,11 @@ export default function DriverOnboarding() {
 
             <div className="grid gap-5 md:grid-cols-2">
               <div className="space-y-2">
-                <label htmlFor="vehicle-make" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-make" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Make
                 </label>
                 <div className="relative">
-                  <CarFront className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={16} />
+                  <CarFront className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={16} />
                   <input
                     id="vehicle-make"
                     type="text"
@@ -283,7 +283,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="vehicle-model" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-model" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Model
                 </label>
                 <input
@@ -300,7 +300,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="vehicle-year" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-year" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Year
                 </label>
                 <input
@@ -319,7 +319,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="vehicle-color" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-color" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Color
                 </label>
                 <input
@@ -336,7 +336,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="vehicle-capacity" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-capacity" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   Capacity
                 </label>
                 <input
@@ -355,7 +355,7 @@ export default function DriverOnboarding() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="vehicle-plate" className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <label htmlFor="vehicle-plate" className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   License plate
                 </label>
                 <input
@@ -373,7 +373,7 @@ export default function DriverOnboarding() {
             </div>
 
             {error ? (
-              <div className="rounded-[1.5rem] border border-brand-warning/25 bg-brand-warning/10 px-5 py-4 text-sm text-brand-warning">
+              <div className="rounded-none border-2 border-black bg-gray-100 px-5 py-4 text-sm text-black">
                 {error}
               </div>
             ) : null}
@@ -387,3 +387,4 @@ export default function DriverOnboarding() {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@ import { Link, type LinkProps } from "react-router-dom";
 
 import { cn } from "../../lib/utils";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+type ButtonVariant = "primary" | "outline" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonStyleProps {
@@ -14,13 +14,11 @@ interface ButtonStyleProps {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-accent text-brand-surface-strong shadow-[var(--shadow-panel)] hover:bg-brand-accent-hover",
-  secondary:
-    "bg-brand-surface-strong text-brand-text-inverse hover:bg-black",
+    "border-2 border-black bg-black text-white shadow-soft hover:bg-white hover:text-black hover:shadow-premium",
   outline:
-    "border border-brand-border bg-transparent text-brand-text-primary hover:bg-brand-surface-soft",
+    "border-2 border-black bg-white text-black shadow-soft hover:bg-black hover:text-white hover:shadow-premium",
   ghost:
-    "bg-transparent text-brand-text-secondary hover:bg-brand-surface-soft hover:text-brand-text-primary",
+    "border-2 border-transparent bg-transparent text-black hover:border-black hover:bg-black hover:text-white",
 };
 
 const sizes: Record<ButtonSize, string> = {
@@ -35,7 +33,7 @@ export function buttonStyles({
   variant = "primary",
 }: ButtonStyleProps = {}) {
   return cn(
-    "inline-flex items-center justify-center rounded-full font-semibold uppercase tracking-[0.22em] text-[11px] transition-all motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg disabled:pointer-events-none disabled:opacity-50 disabled:motion-safe:hover:translate-y-0 disabled:motion-safe:active:scale-100",
+    "inline-flex items-center justify-center rounded-none font-black uppercase tracking-[0.22em] text-[11px] transition-colors motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 disabled:motion-safe:hover:translate-y-0 disabled:motion-safe:active:scale-100",
     variants[variant],
     sizes[size],
     className,

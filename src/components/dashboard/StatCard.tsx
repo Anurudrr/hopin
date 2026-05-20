@@ -14,16 +14,17 @@ export const StatCard: React.FC<StatCardProps> = ({
   label, 
   value, 
   icon: Icon, 
-  color = "text-brand-text-primary",
+  color = "bg-black text-white",
   className
 }) => {
   return (
     <div className={cn("panel p-6", className)}>
-      <div className={cn("mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-bg-secondary transition-colors", color)}>
+      <div className={cn("mb-4 flex h-11 w-11 items-center justify-center border-2 border-black transition-colors", color)}>
         <Icon size={20} />
       </div>
-      <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">{label}</p>
-      <p className="text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">{value}</p>
+      <p className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-black/55">{label}</p>
+      <p className="text-2xl font-black uppercase tracking-tight text-black">{value}</p>
     </div>
   );
 };
+

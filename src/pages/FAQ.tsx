@@ -39,7 +39,7 @@ export default function FAQ() {
 
           <Reveal className="panel max-w-3xl p-4">
             <div className="relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-text-secondary" size={18} />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" size={18} />
               <label htmlFor="faq-search" className="sr-only">
                 Search frequently asked questions
               </label>
@@ -70,10 +70,10 @@ export default function FAQ() {
                   aria-controls={`faq-answer-${index}`}
                   className="flex w-full items-center justify-between gap-4 p-7 text-left"
                 >
-                  <span className="text-xl font-semibold tracking-[-0.03em] text-brand-text-primary">
+                  <span className="text-xl font-black uppercase tracking-tight text-black">
                     {faq.question}
                   </span>
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-text-primary">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                     {openQuestion === faq.question ? <Minus size={18} /> : <Plus size={18} />}
                   </span>
                 </button>
@@ -87,7 +87,7 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-7 pb-7 text-sm leading-7 text-brand-text-secondary">
+                      <div className="px-7 pb-7 text-sm leading-7 text-black/60">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -97,18 +97,18 @@ export default function FAQ() {
             ))}
 
             {!filteredFaqs.length ? (
-              <Reveal className="panel p-8 text-sm leading-7 text-brand-text-secondary">
+              <Reveal className="panel p-8 text-sm leading-7 text-black/60">
                 No matching FAQ found. Try a different term or contact the team directly.
               </Reveal>
             ) : null}
           </div>
 
-          <Reveal className="panel-dark mt-8 flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
+          <Reveal className="panel mt-8 flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                 Still blocked
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 Use the support page for route, safety, or partnership questions.
               </h3>
             </div>
@@ -121,3 +121,4 @@ export default function FAQ() {
     </div>
   );
 }
+

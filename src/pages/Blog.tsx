@@ -75,16 +75,16 @@ export default function Blog() {
               />
               <div className="space-y-5 p-8 md:p-10">
                 <div className="route-chip">{featured.category}</div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   {featured.date}
                 </p>
-                <h2 className="text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+                <h2 className="text-4xl font-black uppercase tracking-tighter text-black">
                   {featured.title}
                 </h2>
-                <p className="text-base leading-8 text-brand-text-secondary">
+                <p className="text-base leading-8 text-black/60">
                   {featured.excerpt}
                 </p>
-                <p className="text-sm leading-7 text-brand-text-secondary">
+                <p className="text-sm leading-7 text-black/60">
                   Journal entries stay readable on one page until individual article routes are ready.
                 </p>
               </div>
@@ -107,14 +107,14 @@ export default function Blog() {
                 <div className="space-y-4 p-7">
                   <div className="flex items-center justify-between gap-3">
                     <span className="route-chip">{article.category}</span>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-secondary">
+                    <span className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                       {article.date}
                     </span>
                   </div>
-                  <h3 className="text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                  <h3 className="text-3xl font-black uppercase tracking-tight text-black">
                     {article.title}
                   </h3>
-                  <p className="text-sm leading-7 text-brand-text-secondary">
+                  <p className="text-sm leading-7 text-black/60">
                     {article.excerpt}
                   </p>
                 </div>
@@ -126,11 +126,10 @@ export default function Blog() {
 
       <section className="section-shell pt-0">
         <div className="section-frame">
-          <Reveal className="panel-dark p-8 md:p-10">
+          <Reveal className="panel p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-end">
               <SectionHeading
                 eyebrow="Subscribe"
-                inverse
                 title={<>Get the next field note when we publish it.</>}
                 description="Subscriptions are saved directly in HopIn so the journal CTA behaves like a real launch surface instead of an email workaround."
               />
@@ -150,15 +149,15 @@ export default function Blog() {
                       setSubmittedFor("");
                     }}
                     placeholder="name@company.com"
-                    className="field-shell flex-1 border-white/10 bg-white/8 text-white placeholder:text-white/35"
+                    className="field-shell flex-1"
                   />
                   <Button type="submit" size="lg" disabled={isSubmitting}>
                     {isSubmitting ? "Saving" : "Subscribe"}
                   </Button>
                 </div>
-                {error ? <p className="text-sm text-brand-warning">{error}</p> : null}
+                {error ? <p className="text-sm text-black">{error}</p> : null}
                 {submittedFor ? (
-                  <p className="text-sm text-white/72">
+                  <p className="text-sm text-black/60">
                     {submittedFor} is now subscribed to HopIn Journal updates.
                   </p>
                 ) : null}
@@ -170,3 +169,4 @@ export default function Blog() {
     </div>
   );
 }
+

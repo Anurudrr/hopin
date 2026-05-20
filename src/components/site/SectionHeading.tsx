@@ -18,7 +18,7 @@ export function SectionHeading({
   title,
   description,
   align = "left",
-  inverse = false,
+  inverse: _inverse = false,
   className,
   titleClassName,
 }: SectionHeadingProps) {
@@ -32,12 +32,11 @@ export function SectionHeading({
         className,
       )}
     >
-      <div className={cn("eyebrow", inverse && "text-white/60")}>{eyebrow}</div>
+      <div className="eyebrow">{eyebrow}</div>
       <h2
         className={cn(
-          "max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary md:text-5xl lg:text-6xl",
+          "max-w-5xl text-5xl font-black uppercase leading-[0.88] tracking-tighter text-black md:text-6xl lg:text-7xl",
           centered && "mx-auto",
-          inverse && "text-brand-text-inverse",
           titleClassName,
         )}
       >
@@ -46,9 +45,8 @@ export function SectionHeading({
       {description ? (
         <p
           className={cn(
-            "max-w-2xl text-base leading-7 text-brand-text-secondary md:text-lg",
-            centered && "mx-auto",
-            inverse && "text-white/64",
+            "max-w-3xl text-base font-medium leading-8 text-black/65 md:text-lg",
+            centered ? "mx-auto" : "border-l-4 border-black pl-5",
           )}
         >
           {description}

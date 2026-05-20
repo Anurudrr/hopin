@@ -48,6 +48,8 @@ export interface DriverApplication {
   license_number: string;
   license_expiry: string;
   document_url: string | null;
+  reviewed_by: string | null;
+  review_notes: string | null;
   reviewed_at: string | null;
   created_at: string;
 }
@@ -68,6 +70,10 @@ export interface Ride {
   fare_per_seat: number;
   status: RideStatus;
   created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  cancel_reason: string | null;
   driver: {
     id: string;
     full_name: string | null;
@@ -94,6 +100,10 @@ export interface Booking {
   status: BookingStatus;
   created_at: string;
   departure_time: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  cancel_reason: string | null;
   driver_name: string | null;
   vehicle_label: string | null;
 }
@@ -127,6 +137,22 @@ export interface ContactMessageInput {
   message: string;
   requestedRole?: string | null;
   requestedCity?: string | null;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  requested_role: string | null;
+  requested_city: string | null;
+  created_at: string;
+}
+
+export interface NewsletterSubscription {
+  email: string;
+  created_at: string;
 }
 
 export interface RideInput {

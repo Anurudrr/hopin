@@ -47,10 +47,10 @@ export default function Careers() {
           <div className="panel space-y-8 p-8 md:p-10">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+                <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                   Open roles
                 </p>
-                <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-brand-text-primary">
+                <h2 className="mt-3 text-4xl font-black uppercase tracking-tighter text-black">
                   Current opportunities
                 </h2>
               </div>
@@ -64,22 +64,22 @@ export default function Careers() {
                 <Reveal
                   key={job.title}
                   delay={index * 0.04}
-                  className="rounded-[1.8rem] border border-brand-border bg-brand-surface-soft p-6"
+                  className="rounded-none border-2 border-black bg-gray-100 p-6"
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                     <div className="space-y-2">
                       <div className="route-chip">{job.team}</div>
-                      <h3 className="text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                      <h3 className="text-2xl font-black uppercase tracking-tight text-black">
                         {job.title}
                       </h3>
-                      <p className="text-sm text-brand-text-secondary">
+                      <p className="text-sm text-black/60">
                         {job.location} / {job.type}
                       </p>
                     </div>
 
                     <Link
                       to={`/contact?topic=careers&role=${encodeURIComponent(job.title)}`}
-                      className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-text-primary hover:text-brand-accent"
+                      className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-black"
                     >
                       Start conversation
                       <ArrowRight size={14} />
@@ -107,25 +107,25 @@ export default function Careers() {
           <div className="grid gap-6 lg:grid-cols-3">
             {principles.map((principle, index) => (
               <Reveal key={principle.title} delay={index * 0.05} className="panel p-8">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+                <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                   <principle.icon size={22} />
                 </div>
-                <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <h3 className="mt-6 text-2xl font-black uppercase tracking-tight text-black">
                   {principle.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+                <p className="mt-4 text-sm leading-7 text-black/60">
                   {principle.body}
                 </p>
               </Reveal>
             ))}
           </div>
 
-          <Reveal className="panel-dark flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
+          <Reveal className="panel flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                 Reach the team
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 If you like the problem, talk to us.
               </h3>
             </div>
@@ -139,3 +139,4 @@ export default function Careers() {
     </div>
   );
 }
+

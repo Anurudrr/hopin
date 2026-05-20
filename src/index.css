@@ -4,23 +4,6 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-
-  --color-brand-bg: #f4efe6;
-  --color-brand-bg-secondary: #e7dece;
-  --color-brand-surface-soft: #fbf8f2;
-  --color-brand-surface-strong: #121212;
-  --color-brand-text-primary: #171513;
-  --color-brand-text-secondary: #655d51;
-  --color-brand-text-inverse: #f8f5ef;
-  --color-brand-border: #211d18;
-  --color-brand-accent: #bb643c;
-  --color-brand-accent-hover: #9a4f2b;
-  --color-brand-warning: #8b4d1a;
-  --color-brand-success: #2d6a4f;
-
-  --shadow-panel: 0 24px 80px rgba(23, 21, 19, 0.12);
-  --shadow-float: 0 24px 60px rgba(6, 6, 6, 0.24);
   --shadow-soft: 4px 4px 0 0 rgba(0, 0, 0, 1);
   --shadow-premium: 8px 8px 0 0 rgba(0, 0, 0, 1);
 }
@@ -32,18 +15,16 @@
 
   body {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top left, rgba(187, 100, 60, 0.08), transparent 26%),
-      linear-gradient(180deg, #f6f1e8 0%, #f1eadf 100%);
-    color: var(--color-brand-text-primary);
+    background: #ffffff;
+    color: #000000;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: var(--color-brand-accent);
-    color: var(--color-brand-text-inverse);
+    background: #000000;
+    color: #ffffff;
   }
 
   a,
@@ -64,7 +45,7 @@
   }
 
   * {
-    scrollbar-color: rgba(23, 21, 19, 0.34) transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.42) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -73,8 +54,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: rgba(23, 21, 19, 0.24);
-    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.24);
   }
 
   *::-webkit-scrollbar-track {
@@ -99,21 +79,16 @@
   }
 
   .panel {
-    border: 1px solid rgba(33, 29, 24, 0.12);
-    border-radius: 2rem;
-    background: rgba(251, 248, 242, 0.92);
-    box-shadow: var(--shadow-panel);
-    backdrop-filter: blur(18px);
+    border: 2px solid #000000;
+    background: #ffffff;
+    box-shadow: var(--shadow-soft);
   }
 
   .panel-dark {
-    border: 1px solid rgba(248, 245, 239, 0.1);
-    border-radius: 2rem;
-    background:
-      linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(29, 26, 23, 0.96));
-    color: var(--color-brand-text-inverse);
-    box-shadow: var(--shadow-float);
-    backdrop-filter: blur(20px);
+    border: 2px solid #000000;
+    background: #000000;
+    color: #ffffff;
+    box-shadow: var(--shadow-premium);
   }
 
   .route-chip {
@@ -121,55 +96,53 @@
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-    border: 1px solid rgba(33, 29, 24, 0.14);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.72);
-    padding: 0.65rem 1rem;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
+    border: 2px solid #000000;
+    background: #ffffff;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-brand-text-primary);
+    color: #000000;
+    box-shadow: var(--shadow-soft);
   }
 
   .eyebrow {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.26em;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-brand-accent);
+    color: #000000;
   }
 
   .serif-accent {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
   }
 
   .field-shell,
   .field-shell-lg {
     width: 100%;
-    border: 1px solid rgba(33, 29, 24, 0.14);
-    border-radius: 1.45rem;
-    background: rgba(255, 255, 255, 0.92);
-    padding: 1rem 1.25rem;
+    border: 2px solid #000000;
+    background: #ffffff;
+    padding: 0.75rem 1rem;
     font-size: 0.95rem;
-    color: var(--color-brand-text-primary);
-    box-shadow: 0 12px 30px rgba(23, 21, 19, 0.08);
+    color: #000000;
+    box-shadow: var(--shadow-soft);
     outline: none;
   }
 
   .field-shell::placeholder,
   .field-shell-lg::placeholder {
-    color: rgba(101, 93, 81, 0.75);
+    color: rgba(0, 0, 0, 0.45);
   }
 
   .field-shell:focus,
   .field-shell-lg:focus {
-    border-color: rgba(187, 100, 60, 0.62);
-    box-shadow:
-      0 0 0 4px rgba(187, 100, 60, 0.14),
-      0 18px 36px rgba(23, 21, 19, 0.1);
+    border-color: #000000;
+    box-shadow: var(--shadow-premium);
   }
 
   .field-shell-lg {
@@ -182,20 +155,20 @@
     top: 1rem;
     z-index: 100;
     transform: translateY(-180%);
-    border-radius: 999px;
-    background: var(--color-brand-surface-strong);
-    color: var(--color-brand-text-inverse);
+    border: 2px solid #000000;
+    background: #000000;
+    color: #ffffff;
     padding: 0.8rem 1.1rem;
     font-size: 0.74rem;
-    font-weight: 700;
+    font-weight: 900;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    box-shadow: var(--shadow-float);
+    box-shadow: var(--shadow-soft);
   }
 
   .skip-link:focus {
     transform: translateY(0);
-    outline: 2px solid rgba(248, 245, 239, 0.76);
+    outline: 2px solid #000000;
     outline-offset: 2px;
   }
 }
@@ -209,14 +182,14 @@
 
 .leaflet-container {
   font-family: var(--font-sans);
-  background: #f0eadf;
+  background: #ffffff;
 }
 
 .leaflet-control-zoom a {
-  color: var(--color-brand-text-primary) !important;
-  background: rgba(251, 248, 242, 0.92) !important;
-  border: 1px solid rgba(33, 29, 24, 0.16) !important;
-  box-shadow: 0 10px 24px rgba(23, 21, 19, 0.14) !important;
+  color: #000000 !important;
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: var(--shadow-soft) !important;
 }
 
 .leaflet-bar {
@@ -226,8 +199,11 @@
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: rgba(251, 248, 242, 0.94) !important;
-  color: var(--color-brand-text-primary) !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000;
+  border-radius: 0 !important;
+  box-shadow: var(--shadow-soft) !important;
 }
 
 .custom-leaflet-icon {
@@ -236,7 +212,7 @@
 }
 
 .leaflet-tile-pane {
-  filter: saturate(0.9) contrast(1.02);
+  filter: grayscale(1) contrast(1.15);
 }
 
 @media (prefers-reduced-motion: reduce) {

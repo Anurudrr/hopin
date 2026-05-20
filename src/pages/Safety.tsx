@@ -43,10 +43,9 @@ export default function Safety() {
     <div className="site-shell">
       <section className="section-shell">
         <div className="section-frame">
-          <div className="panel-dark p-6 md:p-8 lg:p-10">
+          <div className="panel p-6 md:p-8 lg:p-10">
             <SectionHeading
               eyebrow="Safety architecture"
-              inverse
               title={
                 <>
                   A safer ride is usually the result of clearer product structure, not just a panic button.
@@ -57,14 +56,14 @@ export default function Safety() {
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {safetyLayers.map((layer, index) => (
-                <Reveal key={layer.label} delay={index * 0.04} className="rounded-[1.8rem] border border-white/10 bg-white/6 p-5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+                <Reveal key={layer.label} delay={index * 0.04} className="rounded-none border-2 border-black bg-gray-100 p-5">
+                  <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black/60">
                     {layer.label}
                   </p>
-                  <h3 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-white">
+                  <h3 className="mt-4 text-xl font-black uppercase tracking-tight text-black">
                     {layer.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-6 text-white/62">
+                  <p className="mt-3 text-sm leading-6 text-black/60">
                     {layer.body}
                   </p>
                 </Reveal>
@@ -89,13 +88,13 @@ export default function Safety() {
           <div className="grid gap-6 lg:grid-cols-3">
             {controlCards.map((card, index) => (
               <Reveal key={card.title} delay={index * 0.05} className="panel p-8">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-bg-secondary text-brand-accent">
+                <div className="flex h-12 w-12 items-center justify-center rounded-none border-2 border-black bg-black text-white">
                   <card.icon size={22} />
                 </div>
-                <h3 className="mt-6 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <h3 className="mt-6 text-2xl font-black uppercase tracking-tight text-black">
                   {card.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+                <p className="mt-4 text-sm leading-7 text-black/60">
                   {card.body}
                 </p>
               </Reveal>
@@ -119,13 +118,13 @@ export default function Safety() {
           <div className="grid gap-4 lg:grid-cols-3">
             {tripStages.map((stage, index) => (
               <Reveal key={stage.title} delay={index * 0.04} className="panel p-8">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-accent">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black/60">
                   0{index + 1}
                 </p>
-                <h3 className="mt-5 text-2xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+                <h3 className="mt-5 text-2xl font-black uppercase tracking-tight text-black">
                   {stage.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-brand-text-secondary">
+                <p className="mt-4 text-sm leading-7 text-black/60">
                   {stage.body}
                 </p>
               </Reveal>
@@ -138,13 +137,13 @@ export default function Safety() {
         <div className="section-frame">
           <Reveal className="panel flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-brand-accent">
+              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-black">
                 Need help now
               </p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-brand-text-primary">
+              <h3 className="mt-3 text-3xl font-black uppercase tracking-tight text-black">
                 Contact support or review the rider policies.
               </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-brand-text-secondary">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-black/60">
                 If you have a safety concern, we want that path to be faster than any other action on the page.
               </p>
             </div>
@@ -165,3 +164,4 @@ export default function Safety() {
     </div>
   );
 }
+

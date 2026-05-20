@@ -12,9 +12,13 @@ import { supabase } from './supabase'
 import { logDevError, mapApiErrorMessage, withRetry } from './errors'
 import type {
   Booking,
+  ContactMessage,
   ContactMessageInput,
+  DriverApplication,
   DriverApplicationInput,
+  DriverApplicationStatus,
   DriverDashboardData,
+  NewsletterSubscription,
   Ride,
   RideInput,
   RiderDashboardData,
@@ -56,6 +60,21 @@ export async function getAvailableRides(city: string): Promise<Ride[]> {
   }
 }
 
+async function fetchRideById(rideId: string, context: string): Promise<Ride> {
+  const { data, error } = await supabase
+    .from('rides')
+    .select(rideSelect)
+    .eq('id', rideId)
+    .single()
+
+  if (error) {
+    logDevError(`fetchRideById.${context}`, error)
+    throw new Error(mapApiErrorMessage(error, context))
+  }
+
+  return data as Ride
+}
+
 /**
  * Create a new ride as a driver
  */
@@ -93,6 +112,76 @@ export async function createDriverRide(input: RideInput): Promise<Ride> {
     return data as Ride
   } catch (error) {
     logDevError('createDriverRide', error)
+    throw error
+  }
+}
+
+/**
+ * Start a scheduled ride as the assigned driver
+ */
+export async function startDriverRide(rideId: string): Promise<Ride> {
+  try {
+    const { data, error } = await withRetry(() =>
+      supabase.rpc('start_ride', {
+        p_ride_id: rideId,
+      })
+    )
+
+    if (error) {
+      logDevError('startDriverRide', error)
+      throw new Error(mapApiErrorMessage(error, 'starting ride'))
+    }
+
+    return await fetchRideById((data as string) || rideId, 'loading updated ride')
+  } catch (error) {
+    logDevError('startDriverRide', error)
+    throw error
+  }
+}
+
+/**
+ * Complete an active ride as the assigned driver
+ */
+export async function completeDriverRide(rideId: string): Promise<Ride> {
+  try {
+    const { data, error } = await withRetry(() =>
+      supabase.rpc('complete_ride', {
+        p_ride_id: rideId,
+      })
+    )
+
+    if (error) {
+      logDevError('completeDriverRide', error)
+      throw new Error(mapApiErrorMessage(error, 'completing ride'))
+    }
+
+    return await fetchRideById((data as string) || rideId, 'loading updated ride')
+  } catch (error) {
+    logDevError('completeDriverRide', error)
+    throw error
+  }
+}
+
+/**
+ * Cancel a scheduled or active ride as the assigned driver
+ */
+export async function cancelDriverRide(rideId: string, reason?: string): Promise<Ride> {
+  try {
+    const { data, error } = await withRetry(() =>
+      supabase.rpc('cancel_ride_by_driver', {
+        p_ride_id: rideId,
+        p_reason: reason?.trim() || null,
+      })
+    )
+
+    if (error) {
+      logDevError('cancelDriverRide', error)
+      throw new Error(mapApiErrorMessage(error, 'cancelling ride'))
+    }
+
+    return await fetchRideById((data as string) || rideId, 'loading updated ride')
+  } catch (error) {
+    logDevError('cancelDriverRide', error)
     throw error
   }
 }
@@ -373,6 +462,160 @@ export async function submitDriverApplication(input: DriverApplicationInput): Pr
     }
   } catch (error) {
     logDevError('submitDriverApplication', error)
+    throw error
+  }
+}
+
+/**
+ * Load driver applications for admin review
+ */
+export async function getDriverApplicationQueue(): Promise<DriverApplication[]> {
+  try {
+    const { data, error } = await supabase
+      .from('driver_applications')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      logDevError('getDriverApplicationQueue', error)
+      throw new Error(mapApiErrorMessage(error, 'loading driver applications'))
+    }
+
+    return (data ?? []) as DriverApplication[]
+  } catch (error) {
+    logDevError('getDriverApplicationQueue', error)
+    throw error
+  }
+}
+
+/**
+ * Load rides for admin operations
+ */
+export async function getAdminRideQueue(): Promise<Ride[]> {
+  try {
+    const { data, error } = await supabase
+      .from('rides')
+      .select(rideSelect)
+      .order('departure_time', { ascending: false })
+      .limit(100)
+
+    if (error) {
+      logDevError('getAdminRideQueue', error)
+      throw new Error(mapApiErrorMessage(error, 'loading ride operations'))
+    }
+
+    return (data ?? []) as Ride[]
+  } catch (error) {
+    logDevError('getAdminRideQueue', error)
+    throw error
+  }
+}
+
+/**
+ * Load bookings for admin operations
+ */
+export async function getAdminBookingQueue(): Promise<Booking[]> {
+  try {
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    if (error) {
+      logDevError('getAdminBookingQueue', error)
+      throw new Error(mapApiErrorMessage(error, 'loading booking operations'))
+    }
+
+    return (data ?? []) as Booking[]
+  } catch (error) {
+    logDevError('getAdminBookingQueue', error)
+    throw error
+  }
+}
+
+/**
+ * Load support inbox messages for admin operations
+ */
+export async function getSupportInbox(): Promise<ContactMessage[]> {
+  try {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    if (error) {
+      logDevError('getSupportInbox', error)
+      throw new Error(mapApiErrorMessage(error, 'loading support inbox'))
+    }
+
+    return (data ?? []) as ContactMessage[]
+  } catch (error) {
+    logDevError('getSupportInbox', error)
+    throw error
+  }
+}
+
+/**
+ * Load newsletter subscribers for admin operations
+ */
+export async function getNewsletterSubscribers(): Promise<NewsletterSubscription[]> {
+  try {
+    const { data, error } = await supabase
+      .from('newsletter_subscriptions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    if (error) {
+      logDevError('getNewsletterSubscribers', error)
+      throw new Error(mapApiErrorMessage(error, 'loading newsletter subscriptions'))
+    }
+
+    return (data ?? []) as NewsletterSubscription[]
+  } catch (error) {
+    logDevError('getNewsletterSubscribers', error)
+    throw error
+  }
+}
+
+/**
+ * Review a driver application as an admin
+ */
+export async function reviewDriverApplication(
+  applicationId: string,
+  status: DriverApplicationStatus,
+  reviewNotes?: string,
+): Promise<DriverApplication> {
+  try {
+    const { data: reviewedId, error } = await withRetry(() =>
+      supabase.rpc('review_driver_application', {
+        p_application_id: applicationId,
+        p_status: status,
+        p_review_notes: reviewNotes?.trim() || null,
+      })
+    )
+
+    if (error) {
+      logDevError('reviewDriverApplication', error)
+      throw new Error(mapApiErrorMessage(error, 'reviewing driver application'))
+    }
+
+    const { data, error: applicationError } = await supabase
+      .from('driver_applications')
+      .select('*')
+      .eq('id', (reviewedId as string) || applicationId)
+      .single()
+
+    if (applicationError) {
+      logDevError('reviewDriverApplication.fetch', applicationError)
+      throw new Error(mapApiErrorMessage(applicationError, 'loading reviewed application'))
+    }
+
+    return data as DriverApplication
+  } catch (error) {
+    logDevError('reviewDriverApplication', error)
     throw error
   }
 }
