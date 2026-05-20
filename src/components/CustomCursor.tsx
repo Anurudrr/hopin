@@ -4,11 +4,36 @@ import { motion } from 'motion/react';
 const interactiveSelector = 'a, button, input, textarea, select, [role="button"]';
 
 const CustomCursor = () => {
+  const [enabled, setEnabled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const pointerQuery = window.matchMedia("(pointer: fine)");
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncCapability = () => {
+      setEnabled(pointerQuery.matches && !motionQuery.matches);
+    };
+
+    syncCapability();
+
+    pointerQuery.addEventListener("change", syncCapability);
+    motionQuery.addEventListener("change", syncCapability);
+
+    return () => {
+      pointerQuery.removeEventListener("change", syncCapability);
+      motionQuery.removeEventListener("change", syncCapability);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) {
+      setIsVisible(false);
+      setIsHovering(false);
+      return;
+    }
+
     const updateMousePosition = (event: MouseEvent) => {
       setMousePosition({ x: event.clientX, y: event.clientY });
       setIsVisible(true);
@@ -33,9 +58,9 @@ const CustomCursor = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, []);
+  }, [enabled]);
 
-  if (!isVisible) return null;
+  if (!enabled || !isVisible) return null;
 
   return (
     <>

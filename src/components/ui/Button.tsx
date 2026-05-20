@@ -72,17 +72,21 @@ type AnchorButtonLinkProps = ButtonStyleProps &
 
 export type ButtonLinkProps = RouterButtonLinkProps | AnchorButtonLinkProps;
 
+function isRouterButtonLinkProps(props: ButtonLinkProps): props is RouterButtonLinkProps {
+  return "to" in props && props.to !== undefined;
+}
+
 export const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
   ({ className, size = "md", variant = "primary", ...props }, ref) => {
     const sharedClassName = buttonStyles({ className, size, variant });
 
-    if ("to" in props) {
+    if (isRouterButtonLinkProps(props)) {
       const { to, ...linkProps } = props;
 
       return <Link ref={ref} to={to} className={sharedClassName} {...linkProps} />;
     }
 
-    const { href, ...anchorProps } = props;
+    const { href, ...anchorProps } = props as AnchorButtonLinkProps;
 
     return <a ref={ref} href={href} className={sharedClassName} {...anchorProps} />;
   },

@@ -11,18 +11,14 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { supportedCities } from "../../content/siteContent";
-import { Location, useBookingStore } from "../../store/useBookingStore";
+import { type Location, useBookingStore } from "../../store/useBookingStore";
 
-// Leaflet icon fix
-// @ts-ignore
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-// @ts-ignore
 import markerIcon from "leaflet/dist/images/marker-icon.png";
-// @ts-ignore
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// @ts-ignore
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as typeof L.Icon.Default.prototype & { _getIconUrl?: unknown })
+  ._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   iconRetinaUrl: markerIcon2x,

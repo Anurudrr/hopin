@@ -1,164 +1,143 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useAuthStore } from '../../store/useAuthStore';
-import { useBookingStore } from '../../store/useBookingStore';
-import * as mocks from '../mocks/supabase';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock the supabase module
-vi.mock('../../lib/supabase', () => ({
-  supabase: mocks.mockSupabaseClient,
+import {
+  createQueryBuilder,
+  mockAuthUser,
+  mockProfileRow,
+  mockRide,
+  mockSupabaseClient,
+  resetMockSupabase,
+} from "../mocks/supabase";
+
+vi.mock("../lib/supabase", () => ({
+  supabase: mockSupabaseClient,
 }));
 
-describe('useAuthStore', () => {
+import { useAuthStore } from "./useAuthStore";
+import { useBookingStore } from "./useBookingStore";
+
+describe("useAuthStore", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    resetMockSupabase();
+    useAuthStore.setState({
+      user: null,
+      session: null,
+      profile: null,
+      loading: true,
+    });
   });
 
-  it('initializes with default values', () => {
-    const { result } = renderHook(() => useAuthStore());
-    expect(result.current.user).toBeNull();
-    expect(result.current.session).toBeNull();
-    expect(result.current.profile).toBeNull();
-    expect(result.current.loading).toBe(true);
+  it("starts in a loading state", () => {
+    const state = useAuthStore.getState();
+
+    expect(state.user).toBeNull();
+    expect(state.profile).toBeNull();
+    expect(state.loading).toBe(true);
   });
 
-  it('should set user and session on successful initialization', async () => {
-    const { result } = renderHook(() => useAuthStore());
+  it("calls sign up with the expected payload", async () => {
+    await useAuthStore.getState().signUp("rider@example.com", "password123", "Aarav Rider");
 
-    mocks.mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
-      data: {
-        session: {
-          user: mocks.mockAuthUser,
-          access_token: 'test-token',
-        },
-      },
-    });
-
-    await act(async () => {
-      await result.current.initialize();
-    });
-
-    expect(result.current.user).toBeTruthy();
-    expect(result.current.loading).toBe(false);
-  });
-
-  it('should handle sign up', async () => {
-    const { result } = renderHook(() => useAuthStore());
-
-    mocks.mockSupabaseClient.auth.signUp.mockResolvedValueOnce({
-      data: { user: mocks.mockAuthUser },
-      error: null,
-    });
-
-    await act(async () => {
-      await result.current.signUp('test@example.com', 'password123', 'Test User');
-    });
-
-    expect(mocks.mockSupabaseClient.auth.signUp).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password123',
+    expect(mockSupabaseClient.auth.signUp).toHaveBeenCalledWith({
+      email: "rider@example.com",
+      password: "password123",
       options: {
-        data: { full_name: 'Test User' },
+        data: { full_name: "Aarav Rider" },
       },
     });
   });
 
-  it('should handle sign out', async () => {
-    const { result } = renderHook(() => useAuthStore());
-
-    mocks.mockSupabaseClient.auth.signOut.mockResolvedValueOnce({
-      error: null,
+  it("loads a profile for the current user", async () => {
+    useAuthStore.setState({
+      user: mockAuthUser as never,
+      session: null,
+      profile: null,
+      loading: false,
     });
+    mockSupabaseClient.from
+      .mockReturnValueOnce(
+        createQueryBuilder({
+          data: mockProfileRow,
+          error: null,
+        }),
+      )
+      .mockReturnValueOnce(
+        createQueryBuilder({
+          data: { status: "approved" },
+          error: null,
+        }),
+      );
 
-    await act(async () => {
-      await result.current.signOut();
-    });
+    await useAuthStore.getState().fetchProfile();
 
-    expect(result.current.user).toBeNull();
-    expect(result.current.session).toBeNull();
+    expect(useAuthStore.getState().profile?.id).toBe(mockProfileRow.id);
+    expect(useAuthStore.getState().profile?.role).toBe("driver");
   });
 
-  it('should fetch profile after authentication', async () => {
-    const { result } = renderHook(() => useAuthStore());
-
-    mocks.mockSupabaseClient.auth.getUser.mockResolvedValueOnce({
-      data: { user: mocks.mockAuthUser },
+  it("clears auth state when signing out", async () => {
+    useAuthStore.setState({
+      user: mockAuthUser as never,
+      session: {} as never,
+      profile: {
+        id: mockProfileRow.id,
+        full_name: mockProfileRow.full_name,
+        avatar_url: null,
+        phone: mockProfileRow.phone,
+        email: mockProfileRow.email,
+        role: "rider",
+        city: mockProfileRow.city,
+        gender: mockProfileRow.gender,
+        home_address: mockProfileRow.home_address,
+        work_address: mockProfileRow.work_address,
+        is_phone_verified: false,
+        is_email_verified: true,
+        onboarding_completed: true,
+        created_at: mockProfileRow.created_at,
+        updated_at: mockProfileRow.updated_at,
+      },
+      loading: false,
     });
 
-    mocks.mockSupabaseClient.from.mockReturnValueOnce({
-      select: vi.fn().mockResolvedValueOnce({
-        data: [mocks.mockProfile],
-        error: null,
-      }),
-    });
+    await useAuthStore.getState().signOut();
 
-    await act(async () => {
-      await result.current.fetchProfile();
-    });
-
-    expect(result.current.profile).toBeTruthy();
+    expect(useAuthStore.getState().user).toBeNull();
+    expect(useAuthStore.getState().session).toBeNull();
+    expect(useAuthStore.getState().profile).toBeNull();
   });
 });
 
-describe('useBookingStore', () => {
+describe("useBookingStore", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    resetMockSupabase();
+    useBookingStore.getState().reset();
   });
 
-  it('initializes with default values', () => {
-    const { result } = renderHook(() => useBookingStore());
-    expect(result.current.currentRequest).toEqual({ seats: 1 });
-    expect(result.current.selectedRide).toBeNull();
-    expect(result.current.isSearching).toBe(false);
-    expect(result.current.activeRide).toBeNull();
-    expect(result.current.bookingError).toBeNull();
+  it("selects a ride and computes the initial fare estimate", () => {
+    useBookingStore.getState().selectRide(mockRide);
+
+    const state = useBookingStore.getState();
+    expect(state.selectedRide?.id).toBe(mockRide.id);
+    expect(state.currentRequest.fareEstimate).toBe(mockRide.fare_per_seat);
   });
 
-  it('should select a ride', () => {
-    const { result } = renderHook(() => useBookingStore());
+  it("clamps requested seats to the ride inventory", () => {
+    useBookingStore.getState().selectRide(mockRide);
+    useBookingStore.getState().setSeats(99);
 
-    act(() => {
-      result.current.selectRide(mocks.mockRide);
-    });
-
-    expect(result.current.selectedRide).toEqual(mocks.mockRide);
+    expect(useBookingStore.getState().currentRequest.seats).toBe(mockRide.seats_available);
   });
 
-  it('should update seats with clamping', () => {
-    const { result } = renderHook(() => useBookingStore());
+  it("clears and resets booking state", () => {
+    useBookingStore.setState({ bookingError: "Could not book ride." });
+    useBookingStore.getState().clearBookingError();
+    expect(useBookingStore.getState().bookingError).toBeNull();
 
-    act(() => {
-      result.current.selectRide(mocks.mockRide);
-      result.current.setSeats(5);
-    });
+    useBookingStore.getState().selectRide(mockRide);
+    useBookingStore.getState().reset();
 
-    // Should clamp to max available seats
-    expect(result.current.currentRequest.seats).toBeLessThanOrEqual(
-      mocks.mockRide.seats_available
-    );
-  });
-
-  it('should clear booking error', () => {
-    const { result } = renderHook(() => useBookingStore());
-
-    act(() => {
-      useBookingStore.setState({ bookingError: 'Test error' });
-      result.current.clearBookingError();
-    });
-
-    expect(result.current.bookingError).toBeNull();
-  });
-
-  it('should reset booking state', () => {
-    const { result } = renderHook(() => useBookingStore());
-
-    act(() => {
-      result.current.selectRide(mocks.mockRide);
-      result.current.reset();
-    });
-
-    expect(result.current.selectedRide).toBeNull();
-    expect(result.current.isSearching).toBe(false);
-    expect(result.current.activeRide).toBeNull();
+    const state = useBookingStore.getState();
+    expect(state.selectedRide).toBeNull();
+    expect(state.activeRide).toBeNull();
+    expect(state.currentRequest).toEqual({ seats: 1 });
   });
 });

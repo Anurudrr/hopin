@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CalendarClock, Car, Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
+import { Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { LazyMap } from "../components/LazyMap";

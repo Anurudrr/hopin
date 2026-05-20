@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface PageMetaProps {
   description: string;
+  noindex?: boolean;
   title: string;
 }
 
@@ -28,14 +29,35 @@ function upsertMeta(
   element.setAttribute(attribute, value);
 }
 
-export function PageMeta({ description, title }: PageMetaProps) {
+function upsertLink(selector: string, attributes: Record<string, string>) {
+  let element = document.head.querySelector<HTMLLinkElement>(selector);
+
+  if (!element) {
+    element = document.createElement("link");
+    document.head.appendChild(element);
+  }
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    element?.setAttribute(key, value);
+  });
+}
+
+export function PageMeta({ description, noindex = false, title }: PageMetaProps) {
   React.useEffect(() => {
-    const absoluteImageUrl = `${window.location.origin}/og-card.svg`;
+    const absoluteImageUrl = `${window.location.origin}/og-card.png`;
+    const canonicalUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
 
     document.title = title;
 
+    upsertLink('link[rel="canonical"]', {
+      rel: "canonical",
+      href: canonicalUrl,
+    });
     upsertMeta('meta[name="description"]', "content", description, {
       name: "description",
+    });
+    upsertMeta('meta[name="robots"]', "content", noindex ? "noindex,nofollow" : "index,follow", {
+      name: "robots",
     });
     upsertMeta('meta[name="theme-color"]', "content", "#050505", {
       name: "theme-color",
@@ -49,7 +71,7 @@ export function PageMeta({ description, title }: PageMetaProps) {
     upsertMeta('meta[property="og:type"]', "content", "website", {
       property: "og:type",
     });
-    upsertMeta('meta[property="og:url"]', "content", window.location.href, {
+    upsertMeta('meta[property="og:url"]', "content", canonicalUrl, {
       property: "og:url",
     });
     upsertMeta('meta[property="og:image"]', "content", absoluteImageUrl, {
@@ -67,7 +89,7 @@ export function PageMeta({ description, title }: PageMetaProps) {
     upsertMeta('meta[name="twitter:image"]', "content", absoluteImageUrl, {
       name: "twitter:image",
     });
-  }, [description, title]);
+  }, [description, noindex, title]);
 
   return null;
 }

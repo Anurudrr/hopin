@@ -4,23 +4,23 @@ import { motion } from 'motion/react';
 const steps = [
   {
     icon: <MapPin size={32} strokeWidth={2} />,
-    title: 'Book your ride',
-    description: 'Enter your pickup and drop locations. We will show you the estimated fare instantly.',
+    title: 'Choose a city',
+    description: 'Start from a live city corridor so the inventory you browse is tied to actual route coverage.',
   },
   {
     icon: <Users size={32} strokeWidth={2} />,
-    title: 'Match with riders',
-    description: 'Our algorithm finds people traveling on the same route to share the ride.',
+    title: 'Compare published rides',
+    description: 'Review route timing, available seats, driver identity, and per-seat fare before you commit.',
   },
   {
     icon: <IndianRupee size={32} strokeWidth={2} />,
-    title: 'Split the fare',
-    description: 'Save up to 50% on your daily commute by splitting the cost automatically.',
+    title: 'Lock your seat price',
+    description: 'The booking surface calculates total fare from the ride you selected and the seats you requested.',
   },
   {
     icon: <Car size={32} strokeWidth={2} />,
-    title: 'Travel together',
-    description: 'Hop in, meet new people, and enjoy a comfortable ride to your destination.',
+    title: 'Track it in dashboard',
+    description: 'After booking, riders and drivers can review the route state directly from their account surfaces.',
   },
 ];
 
@@ -33,7 +33,7 @@ const HowItWorks = () => {
             How It<br />Works.
           </h2>
           <p className="text-xl text-black font-medium max-w-sm mt-6 md:mt-0">
-            A brutalist, practical way to share rides and save money on your daily commute.
+            A direct booking flow centered on real inventory instead of a simulated matching demo.
           </p>
         </div>
 

@@ -50,10 +50,11 @@ const MapExperience = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-5xl md:text-7xl font-black text-black tracking-tighter uppercase mb-6">
-            See Who's<br/>Going Your Way.
+            Clear Route<br/>Context.
           </h2>
           <p className="text-xl text-black font-medium">
-            Real-time tracking with zero distractions. Just you, your driver, and the route.
+            An illustrative corridor map that shows the kind of route clarity riders should get
+            once they enter the live booking and dashboard surfaces.
           </p>
         </div>
 
@@ -80,7 +81,7 @@ const MapExperience = () => {
             <Marker position={[12.9716, 77.5946]} icon={userIcon}>
               <Popup className="custom-popup">
                 <div className="text-center font-sans border-2 border-black p-2 bg-white">
-                  <p className="font-bold uppercase tracking-widest text-xs text-black">You are here</p>
+                  <p className="font-bold uppercase tracking-widest text-xs text-black">Example pickup</p>
                 </div>
               </Popup>
             </Marker>
@@ -88,8 +89,8 @@ const MapExperience = () => {
             <Marker position={[12.9800, 77.6100]} icon={driverIcon}>
               <Popup className="custom-popup">
                 <div className="font-sans border-2 border-black p-2 bg-white">
-                  <p className="font-bold uppercase tracking-widest text-xs text-black">Nearby Driver</p>
-                  <p className="font-black text-black text-sm">2 MINS</p>
+                  <p className="font-bold uppercase tracking-widest text-xs text-black">Example driver route</p>
+                  <p className="font-black text-black text-sm">Bangalore corridor</p>
                 </div>
               </Popup>
             </Marker>
@@ -103,7 +104,7 @@ const MapExperience = () => {
           {/* Map Overlay UI */}
           <div className="absolute top-8 left-8 z-[1000] bg-white px-6 py-4 border-4 border-black shadow-soft flex items-center space-x-3">
             <span className="w-3 h-3 bg-black animate-pulse"></span>
-            <span className="text-sm font-bold uppercase tracking-widest text-black">12 rides near you</span>
+            <span className="text-sm font-bold uppercase tracking-widest text-black">Illustrative Bangalore corridor</span>
           </div>
         </div>
       </div>

@@ -60,7 +60,7 @@ const Auth = () => {
   }
 
   if (user) {
-    return <Navigate to={profile.onboarding_completed ? '/dashboard' : '/onboarding'} replace />;
+    return <Navigate to={profile?.onboarding_completed ? '/dashboard' : '/onboarding'} replace />;
   }
 
   const onLogin = async (data: LoginFormValues) => {
@@ -172,12 +172,13 @@ const Auth = () => {
                     <label className="block text-xs font-bold uppercase tracking-widest text-black">
                       Password
                     </label>
-                    <a
-                      href="#"
-                      className="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black hover:underline underline-offset-4"
+                    <button
+                      type="button"
+                      disabled
+                      className="text-[10px] font-bold uppercase tracking-widest text-gray-400"
                     >
-                      Forgot?
-                    </a>
+                      Password reset soon
+                    </button>
                   </div>
                   <input
                     {...registerLogin('password')}

@@ -9,6 +9,9 @@ import { submitDriverApplication } from "../lib/api";
 import { getErrorMessage, logDevError } from "../lib/errors";
 import { useAuthStore } from "../store/useAuthStore";
 
+const MAX_DOCUMENT_SIZE_BYTES = 5 * 1024 * 1024;
+const allowedDocumentTypes = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]);
+
 export default function DriverOnboarding() {
   const navigate = useNavigate();
   const { user, profile, fetchProfile } = useAuthStore();
@@ -226,6 +229,18 @@ export default function DriverOnboarding() {
                     setError(null);
                     const file = event.target.files?.[0];
                     if (file) {
+                      if (!allowedDocumentTypes.has(file.type)) {
+                        toast.error("Upload a PDF, JPG, PNG, or WEBP file.");
+                        event.target.value = "";
+                        return;
+                      }
+
+                      if (file.size > MAX_DOCUMENT_SIZE_BYTES) {
+                        toast.error("Upload a file smaller than 5 MB.");
+                        event.target.value = "";
+                        return;
+                      }
+
                       const reader = new FileReader();
                       reader.onload = (e) => {
                         const dataUrl = e.target?.result as string;
@@ -240,7 +255,9 @@ export default function DriverOnboarding() {
                   }}
                   className="field-shell"
                 />
-                <p className="text-xs text-brand-text-secondary">Upload your license scan or photo</p>
+                <p className="text-xs text-brand-text-secondary">
+                  Upload a PDF or image up to 5 MB.
+                </p>
               </div>
             </div>
 

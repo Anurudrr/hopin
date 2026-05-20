@@ -1,169 +1,145 @@
-import { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { ArrowRight, CheckCircle2, Clock3, MapPin } from "lucide-react";
+import { motion } from "motion/react";
+
+import { supportedCities } from "../content/siteContent";
+import { ButtonLink } from "./ui/Button";
+
+const rideSignals = [
+  "Browse routes already published by approved drivers",
+  "Review departure time, seat count, and fare before booking",
+  "Switch cities to compare live inventory instead of simulated matches",
+];
 
 const LiveBooking = () => {
-  const [pickup, setPickup] = useState('Indiranagar, Bangalore');
-  const [drop, setDrop] = useState('Koramangala, Bangalore');
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSearching(true);
-    setTimeout(() => setIsSearching(false), 2000);
-  };
-
   return (
-    <section className="py-32 bg-white overflow-hidden relative border-b-2 border-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-stretch gap-16">
-          
-          <div className="w-full lg:w-1/2 flex flex-col justify-center">
-            <h2 className="text-5xl md:text-7xl font-black text-black tracking-tighter mb-6 uppercase">
-              Ready<br />When You Are.
-            </h2>
-            <p className="text-xl text-black font-medium mb-12 max-w-lg">
-              Enter your destination to see upfront pricing and nearby riders you can share your journey with.
-            </p>
+    <section id="network" className="relative overflow-hidden border-b-2 border-black bg-white py-32">
+      <div className="mx-auto grid max-w-7xl gap-16 px-4 sm:px-6 lg:grid-cols-[1fr_0.95fr] lg:px-8">
+        <div className="flex flex-col justify-center">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.34em] text-black/50">
+            Live booking surface
+          </p>
+          <h2 className="mb-6 text-5xl font-black uppercase tracking-tighter text-black md:text-7xl">
+            Real rides.
+            <br />
+            No fake queue.
+          </h2>
+          <p className="mb-10 max-w-2xl text-xl font-medium leading-relaxed text-black">
+            The booking flow now opens the actual product surface: city-level inventory, driver
+            context, route timing, and seat pricing pulled from live ride records.
+          </p>
 
-            <div className="bg-white p-8 border-4 border-black shadow-premium">
-              <form onSubmit={handleSearch} className="space-y-8 relative">
-                
-                {/* Visual Connection Line */}
-                <div className="absolute left-4 top-[3rem] bottom-[6rem] w-0.5 bg-black z-0"></div>
+          <div className="mb-10 flex flex-wrap gap-3">
+            {supportedCities.map((city) => (
+              <span key={city} className="route-chip border-black bg-white text-black shadow-soft">
+                {city}
+              </span>
+            ))}
+          </div>
 
-                <div className="relative z-10 group">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Pickup</label>
-                  <div className="flex items-center border-b-4 border-black pb-2 transition-colors focus-within:border-gray-500">
-                    <div className="pr-4">
-                      <div className="w-8 h-8 bg-black flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white"></div>
-                      </div>
-                    </div>
-                    <input 
-                      type="text" 
-                      value={pickup}
-                      onChange={(e) => setPickup(e.target.value)}
-                      placeholder="Enter pickup location"
-                      className="w-full bg-transparent border-none outline-none text-xl font-bold text-black placeholder:text-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <div className="relative z-10 group">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Destination</label>
-                  <div className="flex items-center border-b-4 border-black pb-2 transition-colors focus-within:border-gray-500">
-                    <div className="pr-4">
-                      <div className="w-8 h-8 bg-white border-2 border-black flex items-center justify-center">
-                        <div className="w-2 h-2 bg-black"></div>
-                      </div>
-                    </div>
-                    <input 
-                      type="text" 
-                      value={drop}
-                      onChange={(e) => setDrop(e.target.value)}
-                      placeholder="Enter destination"
-                      className="w-full bg-transparent border-none outline-none text-xl font-bold text-black placeholder:text-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <button 
-                  type="submit" 
-                  disabled={isSearching}
-                  className="w-full mt-8 py-5 bg-black text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black border-2 border-black transition-colors shadow-soft flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed group"
-                >
-                  {isSearching ? 'Finding matches...' : 'See Prices'}
-                  {!isSearching && <ArrowRight size={20} strokeWidth={2.5} className="ml-3 group-hover:translate-x-2 transition-transform" />}
-                </button>
-              </form>
-
-              {/* Simulated Results */}
-              <motion.div 
-                initial={false}
-                animate={{ height: isSearching ? 0 : 'auto', opacity: isSearching ? 0 : 1, marginTop: isSearching ? 0 : 32 }}
-                className="overflow-hidden"
+          <div className="space-y-4">
+            {rideSignals.map((signal) => (
+              <div
+                key={signal}
+                className="flex items-start gap-4 border-l-4 border-black pl-4 text-base font-medium text-black"
               >
-                <div className="pt-8 border-t-4 border-black">
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="text-sm font-bold uppercase tracking-widest text-black">Shared Ride</span>
-                    <span className="text-2xl font-black text-black">₹145</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 bg-white p-4 border-2 border-black">
-                    <div className="flex -space-x-3">
-                      <div className="w-12 h-12 bg-black text-white flex items-center justify-center border-2 border-white font-bold text-sm z-10">A</div>
-                      <div className="w-12 h-12 bg-gray-200 text-black flex items-center justify-center border-2 border-white font-bold text-sm">R</div>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-lg font-bold text-black">2 matches on route</p>
-                      <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Save 40% vs solo ride</p>
-                    </div>
-                  </div>
+                <CheckCircle2 className="mt-0.5 shrink-0" size={20} />
+                <span>{signal}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <ButtonLink to="/book" size="lg" className="gap-2">
+              Open Booking Surface
+              <ArrowRight size={16} />
+            </ButtonLink>
+            <ButtonLink to="/cities" variant="outline" size="lg">
+              Explore City Coverage
+            </ButtonLink>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="relative overflow-hidden border-4 border-black bg-white p-8 shadow-premium"
+        >
+          <div
+            className="absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)",
+              backgroundSize: "36px 36px",
+            }}
+          />
+
+          <div className="relative z-10 space-y-6">
+            <div className="flex items-center justify-between border-b-4 border-black pb-5">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-black/55">
+                  Product snapshot
+                </p>
+                <h3 className="mt-2 text-3xl font-black uppercase tracking-tight text-black">
+                  What the live flow shows
+                </h3>
+              </div>
+              <div className="rounded-full border-2 border-black px-4 py-2 text-xs font-bold uppercase tracking-[0.22em]">
+                Real data
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="border-2 border-black bg-black p-5 text-white shadow-soft">
+                <div className="flex items-center gap-3">
+                  <MapPin size={18} />
+                  <p className="text-sm font-bold uppercase tracking-[0.22em]">
+                    Route and city context
+                  </p>
                 </div>
-              </motion.div>
+                <p className="mt-3 text-base text-white/80">
+                  Pickup corridor, destination corridor, and city-specific inventory.
+                </p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="border-2 border-black bg-white p-5 shadow-soft">
+                  <div className="flex items-center gap-3">
+                    <Clock3 size={18} />
+                    <p className="text-sm font-bold uppercase tracking-[0.22em] text-black">
+                      Departure timing
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm font-medium leading-7 text-black/72">
+                    Riders see when the route actually leaves instead of a made-up ETA.
+                  </p>
+                </div>
+                <div className="border-2 border-black bg-white p-5 shadow-soft">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 size={18} />
+                    <p className="text-sm font-bold uppercase tracking-[0.22em] text-black">
+                      Seat and fare state
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm font-medium leading-7 text-black/72">
+                    Seat count and fare totals update from the selected ride.
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-2 border-black bg-white p-5 shadow-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-black/55">
+                  Why this changed
+                </p>
+                <p className="mt-3 text-lg font-bold text-black">
+                  The homepage should route people into the real booking experience, not a demo that
+                  pretends to search.
+                </p>
+              </div>
             </div>
           </div>
-
-          <div className="w-full lg:w-1/2 relative h-[600px] bg-white border-4 border-black shadow-premium overflow-hidden">
-             {/* Brutalist Grid Pattern */}
-             <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-             
-             {/* Map route visualization */}
-             <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none">
-               <motion.path 
-                 d="M 100 450 Q 200 300 300 200 T 450 100" 
-                 fill="none" 
-                 stroke="#000000" 
-                 strokeWidth="6"
-                 strokeDasharray="12 12"
-                 initial={{ pathLength: 0 }}
-                 whileInView={{ pathLength: 1 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 2, ease: "easeInOut" }}
-               />
-               <motion.rect 
-                 x="85" y="435" width="30" height="30" fill="#000" stroke="#fff" strokeWidth="4"
-                 initial={{ scale: 0 }}
-                 whileInView={{ scale: 1 }}
-                 transition={{ delay: 0 }}
-               />
-               <motion.rect 
-                 x="435" y="85" width="30" height="30" fill="#fff" stroke="#000" strokeWidth="4"
-                 initial={{ scale: 0 }}
-                 whileInView={{ scale: 1 }}
-                 transition={{ delay: 2 }}
-               />
-             </svg>
-
-             {/* Moving dot */}
-             <motion.div 
-                className="absolute z-20 w-6 h-6 bg-black border-4 border-white shadow-soft"
-                animate={{
-                  x: [100, 160, 250, 350, 450],
-                  y: [450, 360, 260, 160, 100],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-             />
-
-             {/* Floating Info */}
-             <div className="absolute bottom-8 left-8 right-8 bg-white p-6 border-4 border-black shadow-soft flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Arriving at pickup</p>
-                  <p className="text-2xl font-black text-black">3 MINS</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">Driver</p>
-                  <p className="text-lg font-bold text-black uppercase">Rahul Kumar</p>
-                </div>
-             </div>
-          </div>
-
-        </div>
+        </motion.div>
       </div>
     </section>
   );

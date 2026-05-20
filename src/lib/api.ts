@@ -9,7 +9,7 @@
  */
 
 import { supabase } from './supabase'
-import { getErrorMessage, logDevError, mapApiErrorMessage, withRetry } from './errors'
+import { logDevError, mapApiErrorMessage, withRetry } from './errors'
 import type {
   Booking,
   ContactMessageInput,

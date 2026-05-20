@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Bell, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

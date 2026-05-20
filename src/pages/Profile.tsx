@@ -72,8 +72,18 @@ export default function Profile() {
 
             <div className="flex flex-wrap gap-3">
               <span className="route-chip">Role / {profile.role}</span>
-              <span className="route-chip">Rating / 4.8</span>
-              <span className="route-chip">Verified / yes</span>
+              <span className="route-chip">City / {profile.city || "Not added"}</span>
+              <span className="route-chip">
+                Verified /{" "}
+                {profile.is_email_verified && profile.is_phone_verified
+                  ? "Confirmed"
+                  : profile.is_email_verified || profile.is_phone_verified
+                    ? "Partial"
+                    : "Pending"}
+              </span>
+              <span className="route-chip">
+                Account / {profile.onboarding_completed ? "Complete" : "Needs onboarding"}
+              </span>
             </div>
           </div>
         </motion.div>

@@ -4,21 +4,25 @@ export function logDevError(context: string, error: unknown) {
   }
 }
 
+function hasStringProperty(value: object, key: string): value is Record<string, string> {
+  return key in value && typeof (value as Record<string, unknown>)[key] === "string";
+}
+
 export function getErrorMessage(error: unknown, fallback = "Something went wrong."): string {
   if (error instanceof Error && error.message) {
     return error.message;
   }
 
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
-  if (error && typeof error === 'object') {
-    if ('message' in error && typeof (error as any).message === 'string') {
-      return (error as any).message;
+  if (error && typeof error === "object") {
+    if (hasStringProperty(error, "message")) {
+      return error.message;
     }
-    if ('msg' in error && typeof (error as any).msg === 'string') {
-      return (error as any).msg;
+    if (hasStringProperty(error, "msg")) {
+      return error.msg;
     }
   }
 
@@ -71,9 +75,9 @@ export function mapApiErrorMessage(error: unknown, context: string = ""): string
  * Retry logic for failed API calls with exponential backoff
  */
 export async function withRetry<T>(
-  fn: () => Promise<T>,
+  fn: () => PromiseLike<T> | T,
   maxAttempts: number = 3,
-  delayMs: number = 1000
+  delayMs: number = 1000,
 ): Promise<T> {
   let lastError: Error | null = null;
 

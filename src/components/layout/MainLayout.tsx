@@ -20,6 +20,7 @@ const ROUTE_META: Record<
   string,
   {
     description: string;
+    noindex?: boolean;
     title: string;
   }
 > = {
@@ -37,11 +38,13 @@ const ROUTE_META: Record<
     title: "HopIn Account Access",
     description:
       "Create a HopIn account or log in to book rides, manage your profile, and continue onboarding.",
+    noindex: true,
   },
   "/login": {
     title: "HopIn Account Access",
     description:
       "Create a HopIn account or log in to book rides, manage your profile, and continue onboarding.",
+    noindex: true,
   },
   "/blog": {
     title: "HopIn Journal",
@@ -52,6 +55,7 @@ const ROUTE_META: Record<
     title: "Book a Shared Ride | HopIn",
     description:
       "Choose a route, review per-seat fare estimates, and start matching on supported HopIn city corridors.",
+    noindex: true,
   },
   "/careers": {
     title: "Careers at HopIn",
@@ -72,11 +76,13 @@ const ROUTE_META: Record<
     title: "HopIn Dashboard",
     description:
       "Review active rides, verification status, route activity, and account details in your HopIn dashboard.",
+    noindex: true,
   },
   "/driver-signup": {
     title: "Driver Application | HopIn",
     description:
       "Prepare your driver application details, documents, and vehicle information for HopIn review.",
+    noindex: true,
   },
   "/faq": {
     title: "HopIn FAQ",
@@ -92,6 +98,7 @@ const ROUTE_META: Record<
     title: "Complete Your HopIn Profile",
     description:
       "Finish onboarding with your city, route context, and account details so shared rides stay readable and safe.",
+    noindex: true,
   },
   "/privacy": {
     title: "Privacy Policy | HopIn",
@@ -102,6 +109,7 @@ const ROUTE_META: Record<
     title: "Your HopIn Profile",
     description:
       "Manage your account details, verification signals, and ride preferences inside HopIn.",
+    noindex: true,
   },
   "/safety": {
     title: "Safety at HopIn",
@@ -145,7 +153,7 @@ export const MainLayout = () => {
 
   return (
     <div className="site-shell flex min-h-screen flex-col">
-      <PageMeta title={meta.title} description={meta.description} />
+      <PageMeta title={meta.title} description={meta.description} noindex={meta.noindex} />
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>

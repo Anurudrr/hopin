@@ -9,19 +9,7 @@ Disallow: /driver-signup
 Disallow: /api/
 Disallow: /*.json$
 
-# Crawl delay in seconds
-Crawl-delay: 1
-
 # Sitemaps
+Sitemap: https://hopin.app/sitemap-index.xml
 Sitemap: https://hopin.app/sitemap.xml
 Sitemap: https://hopin.app/sitemap-blog.xml
-
-# Google specific
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0
-
-# Bing specific
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1

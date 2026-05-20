@@ -1,90 +1,222 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-@import 'leaflet/dist/leaflet.css';
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800;900&display=swap");
+@import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
-/* ============================================================
-   HopIn Design System — Monochrome Brutalist Theme
-   ============================================================ */
 @theme {
-  /* Strictly Monochrome Colors */
-  --color-background:           #FFFFFF;
-  --color-background-secondary: #F5F5F5;
-  --color-surface:              #FFFFFF;
-  --color-surface-soft:         #FAFAFA;
-  
-  --color-text-primary:         #000000;
-  --color-text-secondary:       #555555;
-  
-  --color-accent:               #000000;
-  --color-accent-hover:         #333333;
-  --color-accent-soft:          #E0E0E0;
-  
-  --color-border:               #000000; /* Brutalist heavy borders */
-  --color-border-soft:          #E5E5E5;
-  --color-success:              #000000; /* Re-mapped to black for strict monochrome */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 
-  /* Typography */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-brand-bg: #f4efe6;
+  --color-brand-bg-secondary: #e7dece;
+  --color-brand-surface-soft: #fbf8f2;
+  --color-brand-surface-strong: #121212;
+  --color-brand-text-primary: #171513;
+  --color-brand-text-secondary: #655d51;
+  --color-brand-text-inverse: #f8f5ef;
+  --color-brand-border: #211d18;
+  --color-brand-accent: #bb643c;
+  --color-brand-accent-hover: #9a4f2b;
+  --color-brand-warning: #8b4d1a;
+  --color-brand-success: #2d6a4f;
 
-  /* Box Shadows - sharp and stark instead of soft */
-  --shadow-soft:    4px 4px 0px 0px rgba(0, 0, 0, 1);
-  --shadow-premium: 8px 8px 0px 0px rgba(0, 0, 0, 1);
-
-  /* Border Radius - sharp or perfect pill */
-  --radius-xl:  0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
+  --shadow-panel: 0 24px 80px rgba(23, 21, 19, 0.12);
+  --shadow-float: 0 24px 60px rgba(6, 6, 6, 0.24);
+  --shadow-soft: 4px 4px 0 0 rgba(0, 0, 0, 1);
+  --shadow-premium: 8px 8px 0 0 rgba(0, 0, 0, 1);
 }
 
-/* ============================================================
-   Base Styles
-   ============================================================ */
 @layer base {
   html {
     scroll-behavior: smooth;
-    cursor: none; /* Hide default cursor globally */
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-text-primary);
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top left, rgba(187, 100, 60, 0.08), transparent 26%),
+      linear-gradient(180deg, #f6f1e8 0%, #f1eadf 100%);
+    color: var(--color-brand-text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Hide scrollbar for a cleaner look */
-    scrollbar-width: none;
-  }
-  
-  body::-webkit-scrollbar {
-    display: none;
   }
 
   ::selection {
-    background-color: #000000;
-    color: #FFFFFF;
+    background: var(--color-brand-accent);
+    color: var(--color-brand-text-inverse);
   }
 
-  /* Make sure links and buttons also hide default cursor */
-  a, button, input, textarea, select {
-    cursor: none !important;
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    transition:
+      color 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  * {
+    scrollbar-color: rgba(23, 21, 19, 0.34) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(23, 21, 19, 0.24);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
-/* ============================================================
-   Leaflet Map Overrides (Monochrome)
-   ============================================================ */
+@layer components {
+  .site-shell {
+    min-height: 100vh;
+  }
+
+  .section-shell {
+    padding-inline: 1rem;
+    padding-block: 2.75rem;
+  }
+
+  .section-frame {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 80rem;
+  }
+
+  .panel {
+    border: 1px solid rgba(33, 29, 24, 0.12);
+    border-radius: 2rem;
+    background: rgba(251, 248, 242, 0.92);
+    box-shadow: var(--shadow-panel);
+    backdrop-filter: blur(18px);
+  }
+
+  .panel-dark {
+    border: 1px solid rgba(248, 245, 239, 0.1);
+    border-radius: 2rem;
+    background:
+      linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(29, 26, 23, 0.96));
+    color: var(--color-brand-text-inverse);
+    box-shadow: var(--shadow-float);
+    backdrop-filter: blur(20px);
+  }
+
+  .route-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px solid rgba(33, 29, 24, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 0.65rem 1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-brand-text-primary);
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-brand-accent);
+  }
+
+  .serif-accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .field-shell,
+  .field-shell-lg {
+    width: 100%;
+    border: 1px solid rgba(33, 29, 24, 0.14);
+    border-radius: 1.45rem;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    color: var(--color-brand-text-primary);
+    box-shadow: 0 12px 30px rgba(23, 21, 19, 0.08);
+    outline: none;
+  }
+
+  .field-shell::placeholder,
+  .field-shell-lg::placeholder {
+    color: rgba(101, 93, 81, 0.75);
+  }
+
+  .field-shell:focus,
+  .field-shell-lg:focus {
+    border-color: rgba(187, 100, 60, 0.62);
+    box-shadow:
+      0 0 0 4px rgba(187, 100, 60, 0.14),
+      0 18px 36px rgba(23, 21, 19, 0.1);
+  }
+
+  .field-shell-lg {
+    min-height: 10rem;
+  }
+
+  .skip-link {
+    position: fixed;
+    left: 1rem;
+    top: 1rem;
+    z-index: 100;
+    transform: translateY(-180%);
+    border-radius: 999px;
+    background: var(--color-brand-surface-strong);
+    color: var(--color-brand-text-inverse);
+    padding: 0.8rem 1.1rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-float);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+    outline: 2px solid rgba(248, 245, 239, 0.76);
+    outline-offset: 2px;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-shell {
+    padding-inline: 1.5rem;
+    padding-block: 3.75rem;
+  }
+}
+
 .leaflet-container {
   font-family: var(--font-sans);
-  cursor: none !important;
+  background: #f0eadf;
 }
 
 .leaflet-control-zoom a {
-  color: var(--color-text-primary) !important;
-  background-color: var(--color-surface) !important;
-  border: 2px solid var(--color-border) !important;
-  border-radius: 0 !important;
-  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
-  font-weight: bold;
+  color: var(--color-brand-text-primary) !important;
+  background: rgba(251, 248, 242, 0.92) !important;
+  border: 1px solid rgba(33, 29, 24, 0.16) !important;
+  box-shadow: 0 10px 24px rgba(23, 21, 19, 0.14) !important;
 }
 
 .leaflet-bar {
@@ -92,13 +224,31 @@
   box-shadow: none !important;
 }
 
-/* Leaflet default marker fix */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: rgba(251, 248, 242, 0.94) !important;
+  color: var(--color-brand-text-primary) !important;
+}
+
 .custom-leaflet-icon {
   background: transparent;
   border: none;
 }
 
-/* Custom Grayscale filter for CartoDB base map if needed */
 .leaflet-tile-pane {
-  filter: grayscale(100%) contrast(1.1);
+  filter: saturate(0.9) contrast(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
